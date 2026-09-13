@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STICKER HUB - صانع الملصقات</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Amiri:wght@700&family=Reem+Kufi:wght@700&family=Tajawal:wght@700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         body { background-color: #0c111c; color: #ffffff; padding: 12px; padding-bottom: 90px; }
@@ -38,12 +38,11 @@
         .stat-num { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 2px; }
         .stat-label { font-size: 12px; color: #8c9bae; }
 
-        /* لوحة تحكم المطور السريعة */
+        /* لوحة تحكم المطور */
         .dev-panel { background: rgba(255, 152, 0, 0.05); border: 1px dashed #ff9800; border-radius: 16px; padding: 14px; margin-bottom: 12px; }
         .dev-title { font-size: 13px; font-weight: 700; color: #ff9800; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .dev-controls { display: flex; gap: 8px; }
         .dev-btn { background: #ff9800; color: #0c111c; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; flex: 1; }
-        .dev-btn:active { opacity: 0.8; }
 
         /* بانر الإعلانات */
         .ads-banner { background: #131826; border: 1px solid #1f293d; border-radius: 16px; overflow: hidden; margin-bottom: 15px; position: relative; }
@@ -55,31 +54,216 @@
         .tab-content.active { display: block; }
         .inner-card { background: #131826; border: 1px solid #1f293d; border-radius: 16px; padding: 20px; text-align: center; margin-top: 10px; }
 
-        /* شريط التنقل السفلي المحدث بدقة */
+        .create-header-title { font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 4px; }
+        .create-header-sub { font-size: 13px; color: #8c9bae; margin-bottom: 15px; }
+        
+        .create-option-card {
+            background: #131826; border: 1px solid #1f293d; border-radius: 16px; padding: 16px; margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.2s; text-align: right;
+        }
+        .create-option-card:hover { border-color: #ff9800; background: #171f33; }
+        .option-content { display: flex; align-items: center; gap: 14px; }
+        .option-icon-box { width: 48px; height: 48px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .option-text h4 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+        .option-text p { font-size: 12px; color: #8c9bae; }
+        .option-arrow { color: #8c9bae; font-size: 16px; }
+
+        .templates-top-bar { display: flex; justify-content: space-between; align-items: center; background: #131826; border: 1px solid #1f293d; border-radius: 14px; padding: 12px 16px; margin-bottom: 15px; cursor: pointer; }
+        .templates-top-bar span { font-weight: 700; font-size: 16px; color: #fff; }
+        .templates-top-bar .arrow { color: #8c9bae; font-size: 16px; }
+        .scroll-hint { font-size: 11px; color: #8c9bae; text-align: center; margin-bottom: 12px; }
+
+        .templates-grid-container {
+            display: grid; grid-auto-flow: column; grid-template-rows: repeat(3, 1fr); gap: 10px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory;
+        }
+        .templates-grid-container::-webkit-scrollbar { height: 4px; }
+        .templates-grid-container::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 4px; }
+
+        .template-card-box {
+            background: #131826; border: 1px solid #1f293d; border-radius: 14px; width: 110px; height: 120px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; cursor: pointer; transition: 0.2s; scroll-snap-align: start;
+        }
+        .template-card-box:hover { border-color: #ff9800; background: #171f33; }
+        .template-card-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .template-badge { font-size: 10px; color: #ff9800; display: flex; align-items: center; gap: 2px; }
+
+        /* واجهة تعديل الملصق والنص */
+        .editor-container { background: #131826; border: 1px solid #1f293d; border-radius: 16px; padding: 16px; margin-bottom: 15px; position: relative; }
+        
+        .preview-box {
+            width: 100%; height: 240px; background: #0c111c; border: 1px solid #1f293d; border-radius: 12px;
+            position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 15px;
+        }
+        .btn-pause-play { position: absolute; top: 12px; left: 12px; background: #ff9800; border: none; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #0c111c; font-size: 14px; z-index: 10; }
+        .btn-reset-sticker { position: absolute; top: 12px; right: 12px; background: #00b4db; border: none; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; font-size: 14px; z-index: 10; }
+        .btn-scale-sticker { position: absolute; bottom: 12px; right: 12px; background: #00b4db; border: none; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; font-size: 12px; z-index: 10; }
+
+        .sticker-object-demo { font-size: 60px; font-weight: 800; color: #ffffff; transform: scale(1); text-align: center; position: relative; }
+
+        .section-label-right { font-size: 13px; font-weight: 700; color: #94a3b8; text-align: right; margin-bottom: 6px; }
+        
+        .text-input-wrapper {
+            background: #0c111c; border: 1px solid #1f293d; border-radius: 12px; display: flex; align-items: center; padding: 8px 12px; margin-bottom: 4px; position: relative;
+        }
+        .text-input-wrapper input { background: transparent; border: none; color: #ffffff; font-size: 14px; width: 100%; outline: none; text-align: right; padding-left: 10px; }
+        .text-input-wrapper input::placeholder { color: #64748b; }
+        
+        .t-badge-btn {
+            background: #1e293b; border: 1px solid #334155; color: #38bdf8; width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: 0.2s;
+        }
+        .t-badge-btn:hover { background: #00b4db; color: #fff; }
+        .char-counter { font-size: 11px; color: #64748b; text-align: right; margin-bottom: 12px; }
+
+        /* شريط خصائص النص الأربعة */
+        .properties-tabs {
+            display: grid; grid-template-columns: repeat(4, 1fr); background: #0c111c; border: 1px solid #1f293d; border-radius: 12px; padding: 4px; margin-bottom: 12px; gap: 4px;
+        }
+        .prop-tab-btn {
+            background: transparent; border: none; color: #94a3b8; font-size: 11px; font-weight: 700; padding: 8px 2px; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .prop-tab-btn.active { background: #00b4db; color: #ffffff; }
+
+        .prop-panel-content { display: none; }
+        .prop-panel-content.active { display: block; }
+
+        /* واجهة التأثيرات المطابقة للصور الجديدة */
+        .effect-toggle-row {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+        }
+        .effect-title-text { font-size: 13px; font-weight: 700; color: #fff; }
+        
+        .status-pill-btn {
+            background: #1e293b; border: 1px solid #334155; color: #8c9bae; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 20px; cursor: pointer; transition: 0.2s;
+        }
+        .status-pill-btn.active { background: #00b4db; border-color: #00b4db; color: #fff; }
+
+        .gradient-container-box {
+            background: #0c111c; border: 1px solid #1f293d; border-radius: 12px; padding: 12px; margin-bottom: 15px; display: none;
+        }
+        .gradient-container-box.active { display: block; }
+        .gradient-subtitle { font-size: 12px; color: #8c9bae; font-weight: 600; text-align: right; margin-bottom: 10px; }
+
+        .gradient-colors-grid {
+            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; align-items: center;
+        }
+        .gradient-colors-grid::-webkit-scrollbar { height: 4px; }
+        .gradient-colors-grid::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 4px; }
+
+        .g-color-disc {
+            width: 32px; height: 32px; border-radius: 50%; cursor: pointer; flex-shrink: 0; border: 2px solid transparent; transition: 0.2s;
+        }
+        .g-color-disc.selected { border-color: #fff; transform: scale(1.1); }
+        .g-big-circle {
+            width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 2px solid #334155; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .gradient-hex-display { font-size: 12px; color: #8c9bae; font-weight: 700; text-align: right; }
+
+        /* طبقات النص */
+        .layers-section-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .layers-title-label { font-size: 13px; font-weight: 700; color: #94a3b8; }
+        .layers-count-indicator { font-size: 13px; color: #8c9bae; font-weight: 700; }
+        
+        .layers-action-line { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 15px; }
+        .layers-pills-container { display: flex; gap: 6px; overflow-x: auto; max-width: 240px; }
+        .layers-pills-container::-webkit-scrollbar { display: none; }
+        
+        .layer-badge { 
+            background: #00b4db; border: 1px solid #00b4db; color: white; padding: 6px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: 0.2s; 
+        }
+        .layer-badge:not(.active) { background: #1e293b; border-color: #334155; color: #94a3b8; }
+        .add-layer-btn { background: #1e293b; border: 1px solid #334155; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 700; flex-shrink: 0; }
+
+        /* التأثيرات الحركية ووقت الظهور */
+        .anim-section-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; }
+        .anim-label { font-size: 13px; font-weight: 700; color: #94a3b8; }
+        .anim-val { font-size: 13px; color: #8c9bae; font-weight: 700; }
+        
+        .time-slider-bar { background: #00b4db; height: 6px; border-radius: 3px; position: relative; margin-bottom: 12px; width: 100%; }
+
+        .effects-dropdown-menu {
+            position: absolute; bottom: 42px; left: 0; background: #131826; border: 1px solid #25334d; border-radius: 16px; width: 185px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: none; flex-direction: column; overflow: hidden; z-index: 100;
+        }
+        .effect-item-row {
+            padding: 11px 14px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .effect-item-row:last-child { border-bottom: none; }
+        .effect-item-row:hover { background: rgba(0, 180, 219, 0.15); color: #00b4db; }
+
+        .motion-control-block { margin-top: 4px; margin-bottom: 15px; }
+        .motion-sub-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+        .motion-sub-label { font-size: 12px; color: #8c9bae; font-weight: 700; }
+        
+        .range-slider-input {
+            width: 100%; -webkit-appearance: none; background: #1e293b; height: 6px; border-radius: 3px; outline: none;
+        }
+        .range-slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #00b4db; cursor: pointer;
+        }
+
+        .action-main-btn {
+            width: 100%; background: #00b4db; color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 180, 219, 0.3); text-align: center;
+        }
+        .back-btn { background: none; border: none; color: #ff9800; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 5px; margin-bottom: 15px; }
+
+        /* النوافذ المنبثقة للخطوط والألوان */
+        .fonts-modal-overlay, .color-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); z-index: 2500; display: none; align-items: flex-end; justify-content: center; }
+        .fonts-modal-card, .color-modal-card { background: #131826; border: 1px solid #1f293d; border-top-left-radius: 24px; border-top-right-radius: 24px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; padding: 20px 16px; }
+        
+        .color-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .color-modal-title { font-size: 16px; font-weight: 800; color: #fff; }
+        .color-modal-close { background: none; border: none; color: #8c9bae; font-size: 20px; cursor: pointer; }
+        
+        .color-section-heading { font-size: 12px; font-weight: 700; color: #8c9bae; text-align: right; margin-bottom: 12px; }
+
+        .common-colors-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; justify-items: center; margin-bottom: 20px;
+        }
+        .color-item-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+        .color-disc {
+            width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.2s; position: relative;
+        }
+        .color-disc.selected::after { content: '✓'; color: #0c111c; font-weight: 900; font-size: 18px; }
+        .color-name-label { font-size: 11px; color: #8c9bae; font-weight: 600; text-align: center; }
+
+        .custom-color-box {
+            background: #101522; border: 1px solid #1f293d; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+        }
+        .custom-input-wrap { display: flex; align-items: center; gap: 4px; background: #161d2e; border: 1px solid #25334d; border-radius: 10px; padding: 6px 12px; }
+        .custom-input-wrap input { background: transparent; border: none; color: #fff; font-size: 14px; font-weight: 700; outline: none; width: 85px; text-align: left; letter-spacing: 0.5px; }
+        .custom-input-wrap span { color: #8c9bae; font-weight: 700; }
+        .custom-color-preview-btn { width: 44px; height: 44px; border-radius: 10px; border: none; cursor: pointer; }
+
+        .remove-color-action-btn {
+            background: transparent; border: none; color: #ff5252; font-size: 14px; font-weight: 700; width: 100%; text-align: center; padding: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .remove-color-action-btn:hover { opacity: 0.8; }
+
+        .fonts-list-scroll { overflow-y: auto; max-height: 60vh; display: flex; flex-direction: column; gap: 10px; }
+        .font-item-row { background: #182033; border: 1px solid #25334d; border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+
+        /* الشريط السفلي */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #131826; border-top: 1px solid #1f293d; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
-        .nav-item { background: none; border: none; color: #8c9bae; cursor: pointer; font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 600; width: 33.33%; transition: 0.2s; }
+        .nav-item { background: none; border: none; color: #8c9bae; cursor: pointer; font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 600; width: 33.33%; }
         .nav-item.active { color: #ffffff; }
         .nav-icon { font-size: 20px; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر العلوي -->
     <header class="app-header">
         <div class="logo-area">
             <span class="hub-icon">⚡</span>
             <span class="hub-title">STICKER HUB</span>
         </div>
-        <!-- أيقونة التيليجرام تودّي لقناة التحديثات M_V76 -->
         <a href="https://t.me/M_V76" target="_blank" class="tg-channel-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-2.01 1.28-5.68 3.77-.54.37-1.03.55-1.47.54-.48-.01-1.4-.27-2.08-.49-.84-.27-1.51-.42-1.45-.89.03-.25.38-.51 1.07-.78 4.18-1.82 6.98-3.02 8.41-3.61 4-.1.66 4.98 1.48 4.98 1.03 0 .35-.1.57-.16z"/></svg>
         </a>
     </header>
 
-    <!-- محتوى تبويب الرئيسية -->
+    <!-- الرئيسية -->
     <div id="home-tab" class="tab-content active">
-        
-        <!-- البروفايل وزر الاشتراك -->
         <div class="profile-card">
             <div class="profile-info">
                 <img id="user-avatar" src="https://via.placeholder.com/150" class="profile-avatar" alt="User">
@@ -88,25 +272,18 @@
                     <div id="plan-type" class="profile-sub">الخطة المجانية (2 ملصق/يوم)</div>
                 </div>
             </div>
-            <a href="https://t.me/r_3_4" target="_blank" class="subscribe-btn">
-                <span>👑</span> اشترك
-            </a>
+            <a href="https://t.me/r_3_4" target="_blank" class="subscribe-btn"><span>👑</span> اشترك</a>
         </div>
 
-        <!-- لوحة تحكم المطور -->
         <div class="dev-panel">
-            <div class="dev-title">
-                <span>🛠️ لوحة تحكم المطور</span>
-                <span style="font-size: 11px; color: #8c9bae;">تحكم فوري</span>
-            </div>
+            <div class="dev-title"><span>🛠️ لوحة تحكم المطور</span></div>
             <div class="dev-controls">
                 <button class="dev-btn" onclick="setLimit(5)">زيادة إلى 5</button>
                 <button class="dev-btn" onclick="setLimit(10)">زيادة إلى 10</button>
-                <button class="dev-btn" onclick="makeVIP()" style="background: #00b4db; color: #fff;">تفعيل VIP (غير محدود)</button>
+                <button class="dev-btn" onclick="makeVIP()" style="background: #00b4db; color: #fff;">تفعيل VIP</button>
             </div>
         </div>
 
-        <!-- عداد الاستخدام اليومي -->
         <div class="usage-card">
             <div class="usage-header">
                 <span>استخدامك اليوم</span>
@@ -117,7 +294,6 @@
             </div>
         </div>
 
-        <!-- الإحصائيات -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">✨</div>
@@ -131,24 +307,224 @@
             </div>
         </div>
 
-        <!-- بانر الإعلانات -->
         <div class="ads-banner">
             <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=60" class="ads-media" alt="Ad">
             <div class="ads-overlay">⚡ الملصقات المميزة الاحترافية في تليجرام بلاش!</div>
         </div>
-
     </div>
 
-    <!-- محتوى تبويب إنشاء ملصق -->
+    <!-- إنشاء ملصق -->
     <div id="create-tab" class="tab-content">
-        <div class="inner-card">
-            <h3>قسم إنشاء ملصق جديد</h3>
-            <p style="color: #8c9bae; margin-top: 8px; font-size: 13px;">قم برفع صورتك أو تصميم ملصقك الخاص بكل سهولة.</p>
-            <button onclick="addSticker()" style="margin-top: 15px; background: #ff9800; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; color: #0c111c; cursor: pointer;">تصميم ملصق جديد ➕</button>
+        <div id="create-main-menu">
+            <div class="create-header-title">إنشاء ملصق</div>
+            <div class="create-header-sub">اختر طريقة البداية</div>
+
+            <div class="create-option-card" onclick="showSection('template-section')">
+                <div class="option-content">
+                    <div class="option-icon-box" style="color: #ff9800;">✨</div>
+                    <div class="option-text">
+                        <h4>إنشاء من قالب</h4>
+                        <p>اختر قالب متحرك وأضف اسمك عليه...</p>
+                    </div>
+                </div>
+                <div class="option-arrow">‹</div>
+            </div>
+
+            <div class="create-option-card" onclick="showSection('text-section')">
+                <div class="option-content">
+                    <div class="option-icon-box" style="color: #00b4db;">T</div>
+                    <div class="option-text">
+                        <h4>نص بدون قالب</h4>
+                        <p>ملصق نصي بخلفية شفافة بالكامل</p>
+                    </div>
+                </div>
+                <div class="option-arrow">‹</div>
+            </div>
+        </div>
+
+        <!-- قسم القوالب -->
+        <div id="template-section" style="display: none;">
+            <button class="button back-btn" onclick="showSection('create-main-menu')">‹ رجوع</button>
+            <div class="templates-top-bar">
+                <span>اختر قالباً</span>
+                <span class="arrow">›</span>
+            </div>
+            <div class="scroll-hint">↔ اسحب لليمين أو لليسار للتصفح</div>
+            <div class="templates-grid-container">
+                <div class="template-card-box" onclick="selectTemplate('القالب 1')"><div class="template-card-title">القالب 1</div><div class="template-badge">🔥 1</div></div>
+                <div class="template-card-box" onclick="selectTemplate('القالب 2')"><div class="template-card-title">القالب 2</div><div class="template-badge">🔥 2</div></div>
+                <div class="template-card-box" onclick="selectTemplate('القالب 3')"><div class="template-card-title">القالب 3</div><div class="template-badge">🔥 3</div></div>
+            </div>
+        </div>
+
+        <!-- واجهة تعديل الملصق والنص -->
+        <div id="sticker-editor-section" style="display: none;">
+            <button class="button back-btn" onclick="showSection('template-section')">‹ رجوع</button>
+            <div class="templates-top-bar" style="margin-bottom: 12px;">
+                <span id="active-template-title">تصميم الملصق</span>
+                <span class="arrow">›</span>
+            </div>
+
+            <div class="editor-container">
+                <div class="preview-box">
+                    <button class="btn-pause-play" onclick="togglePlayState()" id="playPauseBtn">⏸</button>
+                    <button class="btn-reset-sticker" onclick="resetStickerPosition()">🔄</button>
+                    <div id="stickerObject" class="sticker-object-demo">اكتب اسمك...</div>
+                    <button class="btn-scale-sticker">🔀</button>
+                </div>
+
+                <div class="section-label-right" id="activeInputLabel">النص (طبقة 1)</div>
+                <div class="text-input-wrapper">
+                    <button class="t-badge-btn" onclick="openFontsModal()">T</button>
+                    <input type="text" id="stickerTextInput" placeholder="اضغط هنا للكتابة..." oninput="updateLiveText(this.value)">
+                </div>
+                <div class="char-counter" id="charCounter">0/20</div>
+
+                <!-- شريط خصائص النص الأربعة -->
+                <div class="properties-tabs">
+                    <button class="prop-tab-btn" onclick="switchPropertyTab('strokePanel', this)">السماكة</button>
+                    <button class="prop-tab-btn" onclick="switchPropertyTab('sizePanel', this)">حجم الخط</button>
+                    <button class="prop-tab-btn" onclick="switchPropertyTab('tdPanel', this)">نص ثلاثي الأبعاد</button>
+                    <button class="prop-tab-btn active" onclick="switchPropertyTab('effectsPanel', this)">التأثيرات</button>
+                </div>
+
+                <!-- 1. واجهة السماكة والحدود -->
+                <div id="strokePanel" class="prop-panel-content">
+                    <div class="color-picker-row" onclick="openColorModal('stroke')" style="background:#0c111c; border:1px solid #1f293d; border-radius:12px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; cursor:pointer;">
+                        <div class="color-circle" id="strokeColorPreviewCircle" style="width:26px; height:26px; background:#FFFFFF; border-radius:50%; border:2px solid #334155;"></div>
+                        <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:#94a3b8; font-weight:600;">
+                            <span id="strokeColorHexText">#FFFFFF</span>
+                            <span>لون الحدود (Stroke)</span>
+                        </div>
+                        <span style="color: #64748b; font-size: 14px;">‹</span>
+                    </div>
+
+                    <div class="slider-panel-box" style="margin-bottom: 10px;">
+                        <div class="slider-header-row" style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <span id="strokeWidthValDisplay" style="font-size:13px; color:#fff; font-weight:700;">12px</span>
+                            <span style="font-size:13px; font-weight:700; color:#94a3b8;">سماكة الحدود</span>
+                        </div>
+                        <input type="range" min="0" max="30" value="12" class="range-slider-input" oninput="updateStrokeWidth(this.value)">
+                    </div>
+                </div>
+
+                <!-- 2. واجهة حجم الخط -->
+                <div id="sizePanel" class="prop-panel-content">
+                    <div class="slider-panel-box" style="margin-bottom: 10px;">
+                        <div class="slider-header-row" style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <span id="sizeValDisplay" style="font-size:13px; color:#fff; font-weight:700;">60px</span>
+                            <span style="font-size:13px; font-weight:700; color:#94a3b8;">حجم الخط</span>
+                        </div>
+                        <input type="range" min="12" max="120" step="1" value="60" class="range-slider-input" oninput="updateFontSize(this.value)">
+                    </div>
+                </div>
+
+                <!-- 3. واجهة نص ثلاثي الأبعاد -->
+                <div id="tdPanel" class="prop-panel-content">
+                    <div class="effect-toggle-row">
+                        <span class="effect-title-text">نص ثلاثي الأبعاد</span>
+                        <button class="status-pill-btn" id="tdSwitchBtn" onclick="toggleTDState(this)">مطفّأ</button>
+                    </div>
+                </div>
+
+                <!-- 4. واجهة التأثيرات الجديدة (تدرج لوني + نص منحني) المطابقة للصور -->
+                <div id="effectsPanel" class="prop-panel-content active">
+                    <!-- تدرج لوني -->
+                    <div class="effect-toggle-row">
+                        <span class="effect-title-text">تدرج لوني</span>
+                        <button class="status-pill-btn" id="gradientSwitchBtn" onclick="toggleGradientState(this)">مطفّأ</button>
+                    </div>
+
+                    <div class="gradient-container-box" id="gradientContainerBox">
+                        <div class="gradient-subtitle">اللون الثاني للتدرج</div>
+                        <div class="gradient-colors-grid">
+                            <div class="g-color-disc" style="background: #FF9800;" onclick="pickGradientColor('#FF9800', this)"></div>
+                            <div class="g-color-disc" style="background: #000000;" onclick="pickGradientColor('#000000', this)"></div>
+                            <div class="g-color-disc" style="background: #FFFF00;" onclick="pickGradientColor('#FFFF00', this)"></div>
+                            <div class="g-color-disc" style="background: #00FF00;" onclick="pickGradientColor('#00FF00', this)"></div>
+                            <div class="g-color-disc" style="background: #0000FF;" onclick="pickGradientColor('#0000FF', this)"></div>
+                            <div class="g-color-disc" style="background: #FF0000;" onclick="pickGradientColor('#FF0000', this)"></div>
+                            <div class="g-color-disc" style="background: #FFFFFF;" onclick="pickGradientColor('#FFFFFF', this)"></div>
+                            <div class="g-big-circle" id="gradientActiveBigCircle" onclick="openColorModal('gradient')"></div>
+                        </div>
+                        <div class="gradient-hex-display" id="gradientHexText">#FFFFFF</div>
+                    </div>
+
+                    <!-- نص منحني -->
+                    <div class="effect-toggle-row" style="margin-top: 15px;">
+                        <span class="effect-title-text">نص منحني</span>
+                        <button class="status-pill-btn" id="curvedSwitchBtn" onclick="toggleCurvedState(this)">مطفّأ</button>
+                    </div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #1f293d; margin: 15px 0;">
+
+                <!-- طبقات النص -->
+                <div class="layers-section-row">
+                    <div class="layers-count-indicator" id="layersCounterText">1/6</div>
+                    <div class="layers-title-label">طبقات النص</div>
+                </div>
+
+                <div class="layers-action-line">
+                    <div class="add-layer-btn" onclick="addNewTextLayer()" title="إضافة طبقة">+</div>
+                    <div class="layers-pills-container" id="layersPillsContainer"></div>
+                </div>
+
+                <!-- التأثيرات الحركية -->
+                <div class="anim-section-row">
+                    <div class="anim-val" id="effectsCountNum">0/4</div>
+                    <div class="anim-label">التأثيرات الحركية</div>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; position: relative;">
+                    <div class="add-layer-btn" onclick="toggleEffectsDropdown()">+</div>
+                    
+                    <div id="effectsDropdown" class="effects-dropdown-menu">
+                        <div class="effect-item-row" onclick="applyAnimationEffect('spin', 'نجوم تدور')"><span>نجوم تدور</span> ⭐</div>
+                        <div class="effect-item-row" onclick="applyAnimationEffect('smoke', 'دخان')"><span>دخان</span> 💨</div>
+                        <div class="effect-item-row" onclick="applyAnimationEffect('explosion', 'انفجار')"><span>انفجار</span> 🔥</div>
+                        <div class="effect-item-row" onclick="applyAnimationEffect('flowers', 'ورود وأزهار')"><span>ورود وأزهار</span> 🌸</div>
+                    </div>
+                </div>
+
+                <!-- وقت الظهور بالحركة -->
+                <div class="anim-section-row">
+                    <div id="timeRangeDisplay" class="anim-val">16% - 100%</div>
+                    <div class="anim-label">وقت الظهور بالحركة</div>
+                </div>
+                
+                <div class="time-slider-bar"></div>
+
+                <div class="motion-control-block">
+                    <div class="motion-sub-row">
+                        <span id="startValText" class="motion-sub-label">16%</span>
+                        <span class="motion-sub-label">يبدأ</span>
+                    </div>
+                    <input type="range" min="0" max="100" value="16" class="range-slider-input" id="startMotionSlider" oninput="updateMotionTimes()">
+
+                    <div class="motion-sub-row" style="margin-top: 10px;">
+                        <span id="endValText" class="motion-sub-label">100%</span>
+                        <span class="motion-sub-label">ينتهي</span>
+                    </div>
+                    <input type="range" min="0" max="100" value="100" class="range-slider-input" id="endMotionSlider" oninput="updateMotionTimes()">
+                </div>
+            </div>
+
+            <button class="action-main-btn" onclick="finalizeSticker()">متابعة</button>
+        </div>
+
+        <!-- نص بدون قالب -->
+        <div id="text-section" style="display: none;">
+            <button class="button back-btn" onclick="showSection('create-main-menu')">‹ رجوع</button>
+            <div class="inner-card">
+                <h3>تصميم نص بدون قالب</h3>
+                <input type="text" placeholder="اكتب النص هنا..." style="width: 100%; padding: 10px; margin-top: 15px; border-radius: 8px; border: 1px solid #1f293d; background: #0c111c; color: #fff;">
+                <button onclick="addCustomSticker()" style="margin-top: 15px; background: #ff9800; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; color: #0c111c; cursor: pointer; width: 100%;">حفظ وإنشاء الملصق 🚀</button>
+            </div>
         </div>
     </div>
 
-    <!-- محتوى تبويب حزمي -->
+    <!-- حزمي -->
     <div id="packs-tab" class="tab-content">
         <div class="inner-card">
             <h3>حزمي وملصقاتي المسجلة</h3>
@@ -156,20 +532,57 @@
         </div>
     </div>
 
-    <!-- الشريط السفلي المطابق للترتيب المطلوب 100% -->
+    <!-- نافذة الخطوط -->
+    <div id="fontsModal" class="fonts-modal-overlay">
+        <div class="fonts-modal-card">
+            <div class="color-modal-header">
+                <button class="color-modal-close" onclick="closeFontsModal()">✕</button>
+                <div class="color-modal-title">اختر الخط</div>
+            </div>
+            <div class="fonts-list-scroll" id="fontsListContainer"></div>
+        </div>
+    </div>
+
+    <!-- نافذة الألوان الشاملة -->
+    <div id="colorModal" class="color-modal-overlay">
+        <div class="color-modal-card">
+            <div class="color-modal-header">
+                <button class="color-modal-close" onclick="closeColorModal()">✕</button>
+                <div class="color-modal-title" id="colorModalTitle">لون التدرج</div>
+            </div>
+
+            <div class="color-section-heading">ألوان شائعة</div>
+            <div class="common-colors-grid">
+                <div class="color-item-wrap" onclick="pickColor('#FFFF00')"><div class="color-disc" id="disc-FFFF00" style="background: #FFFF00;"></div><span class="color-name-label">أصفر</span></div>
+                <div class="color-item-wrap" onclick="pickColor('#00FF00')"><div class="color-disc" id="disc-00FF00" style="background: #00FF00;"></div><span class="color-name-label">أخضر</span></div>
+                <div class="color-item-wrap" onclick="pickColor('#0000FF')"><div class="color-disc" id="disc-0000FF" style="background: #0000FF;"></div><span class="color-name-label">أزرق</span></div>
+                <div class="color-item-wrap" onclick="pickColor('#FF0000')"><div class="color-disc" id="disc-FF0000" style="background: #FF0000;"></div><span class="color-name-label">أحمر</span></div>
+                <div class="color-item-wrap" onclick="pickColor('#FFFFFF')"><div class="color-disc" id="disc-FFFFFF" style="background: #FFFFFF;"></div><span class="color-name-label">أبيض</span></div>
+                <div class="color-item-wrap" onclick="pickColor('#00FFFF')"><div class="color-disc" id="disc-00FFFF" style="background: #00FFFF;"></div><span class="color-name-label">سماوي</span></div>
+                <div class="color-item-wrap" onclick="pickColor('#FF69B4')"><div class="color-disc" id="disc-FF69B4" style="background: #FF69B4;"></div><span class="color-name-label">وردي</span></div>
+                <div class="color-item-wrap" onclick="pickColor('#8A2BE2')"><div class="color-disc" id="disc-8A2BE2" style="background: #8A2BE2;"></div><span class="color-name-label">بنفسجي</span></div>
+                <div class="color-item-wrap" onclick="pickColor('#FFA500')"><div class="color-disc" id="disc-FFA500" style="background: #FFA500;"></div><span class="color-name-label">برتقالي</span></div>
+                <div class="color-item-wrap" onclick="pickColor('#000000')"><div class="color-disc selected" id="disc-000000" style="background: #000000; border-color: #333;"></div><span class="color-name-label">أسود</span></div>
+            </div>
+
+            <div class="color-section-heading">لون مخصص</div>
+            <div class="custom-color-box">
+                <button class="custom-color-preview-btn" id="customColorPreviewBtn" style="background: #000000;"></button>
+                <div class="custom-input-wrap">
+                    <span>#</span>
+                    <input type="text" id="hexInputBox" value="000000" maxlength="6" oninput="handleHexInput(this.value)">
+                </div>
+            </div>
+
+            <button class="remove-color-action-btn" onclick="removeColor()">إزالة اللون</button>
+        </div>
+    </div>
+
+    <!-- الشريط السفلي -->
     <nav class="bottom-nav">
-        <button class="nav-item" onclick="switchTab('packs-tab', this)">
-            <span class="nav-icon">📦</span>
-            <span>حزمي</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('create-tab', this)">
-            <span class="nav-icon">➕</span>
-            <span>إنشاء ملصق</span>
-        </button>
-        <button class="nav-item active" onclick="switchTab('home-tab', this)">
-            <span class="nav-icon">🏠</span>
-            <span>الرئيسية</span>
-        </button>
+        <button class="nav-item" onclick="switchTab('packs-tab', this)"><span class="nav-icon">📦</span><span>حزمي</span></button>
+        <button class="nav-item" onclick="switchTab('create-tab', this)"><span class="nav-icon">➕</span><span>إنشاء ملصق</span></button>
+        <button class="nav-item active" onclick="switchTab('home-tab', this)"><span class="nav-icon">🏠</span><span>الرئيسية</span></button>
     </nav>
 
     <script>
@@ -177,45 +590,345 @@
         let usedCount = localStorage.getItem('user_used_count') ? parseInt(localStorage.getItem('user_used_count')) : 0;
         let isVipUser = localStorage.getItem('is_vip') === 'true';
 
+        let selectedTemplateName = '';
+        let isPlaying = true;
+        let textLayers = [{ 
+            id: 1, 
+            text: '', 
+            color: '#FFFFFF',
+            strokeColor: '#00FF00',
+            strokeWidth: 12,
+            gradientActive: false,
+            gradientColor: '#FFFFFF',
+            curvedActive: false,
+            tdActive: false
+        }];
+        let activeLayerIndex = 0;
+        let currentColorTarget = 'gradient';
+
         window.addEventListener('DOMContentLoaded', () => {
             const tg = window.Telegram.WebApp;
             tg.expand();
             
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
-                const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ') || 'مستخدم تيليجرام';
-                document.getElementById('user-name').innerText = fullName;
-                if (user.photo_url) {
-                    document.getElementById('user-avatar').src = user.photo_url;
-                }
+                document.getElementById('user-name').innerText = [user.first_name, user.last_name].filter(Boolean).join(' ') || 'مستخدم';
+                if (user.photo_url) document.getElementById('user-avatar').src = user.photo_url;
             } else {
                 document.getElementById('user-name').innerText = "المطور (تجريبي)";
             }
             updateUI();
+            buildFontsList();
+            renderLayersUI();
+            document.getElementById('stickerObject').style.fontSize = '60px';
+            updateMotionTimes();
         });
+
+        function buildFontsList() {
+            const container = document.getElementById('fontsListContainer');
+            container.innerHTML = '';
+            for (let i = 1; i <= 20; i++) {
+                const item = document.createElement('div');
+                item.className = 'font-item-row';
+                item.onclick = () => closeFontsModal();
+                item.innerHTML = `<div style="color:#94a3b8;">خط ${i}</div><div>أبجد ABC</div>`;
+                container.appendChild(item);
+            }
+        }
+
+        function openFontsModal() { document.getElementById('fontsModal').style.display = 'flex'; }
+        function closeFontsModal() { document.getElementById('fontsModal').style.display = 'none'; }
+        
+        function openColorModal(target) {
+            currentColorTarget = target;
+            let title = 'لون التدرج';
+            let curColor = textLayers[activeLayerIndex].gradientColor;
+            if (target === 'stroke') { title = 'لون الحدود (Stroke)'; curColor = textLayers[activeLayerIndex].strokeColor; }
+
+            document.getElementById('colorModalTitle').innerText = title;
+            curColor = curColor.replace('#', '');
+            document.getElementById('hexInputBox').value = curColor.toUpperCase();
+            document.getElementById('customColorPreviewBtn').style.background = '#' + curColor;
+            
+            updateSelectedDiscUI('#' + curColor);
+            document.getElementById('colorModal').style.display = 'flex';
+        }
+        function closeColorModal() { document.getElementById('colorModal').style.display = 'none'; }
+
+        function pickColor(hexCode) {
+            applyColorToTarget(hexCode);
+            document.getElementById('hexInputBox').value = hexCode.replace('#', '');
+            document.getElementById('customColorPreviewBtn').style.background = hexCode;
+            updateSelectedDiscUI(hexCode);
+            closeColorModal();
+        }
+
+        function handleHexInput(val) {
+            if (val.length === 3 || val.length === 6) {
+                let fullHex = '#' + val;
+                document.getElementById('customColorPreviewBtn').style.background = fullHex;
+                applyColorToTarget(fullHex);
+                updateSelectedDiscUI(fullHex);
+            }
+        }
+
+        function applyColorToTarget(hexCode) {
+            const curLayer = textLayers[activeLayerIndex];
+            if (currentColorTarget === 'gradient') {
+                curLayer.gradientColor = hexCode;
+                document.getElementById('gradientActiveBigCircle').style.background = hexCode;
+                document.getElementById('gradientHexText').innerText = hexCode;
+                applyGradientStyle();
+            } else if (currentColorTarget === 'stroke') {
+                document.getElementById('strokeColorPreviewCircle').style.background = hexCode;
+                document.getElementById('strokeColorHexText').innerText = hexCode;
+                curLayer.strokeColor = hexCode;
+            }
+        }
+
+        function updateSelectedDiscUI(hexCode) {
+            document.querySelectorAll('.color-disc').forEach(disc => disc.classList.remove('selected'));
+            let targetDisc = document.getElementById('disc-' + hexCode.replace('#', '').toUpperCase());
+            if (targetDisc) targetDisc.classList.add('selected');
+        }
+
+        function removeColor() {
+            applyColorToTarget('transparent');
+            closeColorModal();
+        }
+
+        function switchPropertyTab(panelId, btnElement) {
+            const parentTabs = btnElement.closest('.properties-tabs');
+            if(parentTabs) {
+                parentTabs.querySelectorAll('.prop-tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.prop-panel-content').forEach(p => p.classList.remove('active'));
+                btnElement.classList.add('active');
+                document.getElementById(panelId).classList.add('active');
+            }
+        }
+
+        // أزرار التفعيل المطفاة/المفعلة الجديدة
+        function toggleGradientState(btn) {
+            const curLayer = textLayers[activeLayerIndex];
+            curLayer.gradientActive = !curLayer.gradientActive;
+            if (curLayer.gradientActive) {
+                btn.classList.add('active');
+                btn.innerText = 'مفعل';
+                document.getElementById('gradientContainerBox').classList.add('active');
+            } else {
+                btn.classList.remove('active');
+                btn.innerText = 'مطفّأ';
+                document.getElementById('gradientContainerBox').classList.remove('active');
+            }
+            applyGradientStyle();
+        }
+
+        function pickGradientColor(hexCode, element) {
+            const curLayer = textLayers[activeLayerIndex];
+            curLayer.gradientColor = hexCode;
+            document.querySelectorAll('.g-color-disc').forEach(d => d.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('gradientActiveBigCircle').style.background = hexCode;
+            document.getElementById('gradientHexText').innerText = hexCode;
+            applyGradientStyle();
+        }
+
+        function applyGradientStyle() {
+            const curLayer = textLayers[activeLayerIndex];
+            const stickerObj = document.getElementById('stickerObject');
+            if (curLayer.gradientActive) {
+                stickerObj.style.background = `linear-gradient(135deg, #FFFFFF, ${curLayer.gradientColor})`;
+                stickerObj.style.webkitBackgroundClip = 'text';
+                stickerObj.style.webkitTextFillColor = 'transparent';
+            } else {
+                stickerObj.style.background = 'none';
+                stickerObj.style.webkitBackgroundClip = 'unset';
+                stickerObj.style.webkitTextFillColor = '#FFFFFF';
+            }
+        }
+
+        function toggleCurvedState(btn) {
+            const curLayer = textLayers[activeLayerIndex];
+            curLayer.curvedActive = !curLayer.curvedActive;
+            if (curLayer.curvedActive) {
+                btn.classList.add('active');
+                btn.innerText = 'مفعل';
+            } else {
+                btn.classList.remove('active');
+                btn.innerText = 'مطفّأ';
+            }
+        }
+
+        function toggleTDState(btn) {
+            const curLayer = textLayers[activeLayerIndex];
+            curLayer.tdActive = !curLayer.tdActive;
+            if (curLayer.tdActive) {
+                btn.classList.add('active');
+                btn.innerText = 'مفعل';
+            } else {
+                btn.classList.remove('active');
+                btn.innerText = 'مطفّأ';
+            }
+        }
+
+        function updateStrokeWidth(val) {
+            document.getElementById('strokeWidthValDisplay').innerText = val + 'px';
+            textLayers[activeLayerIndex].strokeWidth = parseInt(val);
+        }
+
+        function updateFontSize(val) {
+            document.getElementById('sizeValDisplay').innerText = val + 'px';
+            document.getElementById('stickerObject').style.fontSize = val + 'px';
+        }
+
+        function renderLayersUI() {
+            const container = document.getElementById('layersPillsContainer');
+            container.innerHTML = '';
+
+            textLayers.forEach((layer, idx) => {
+                const pill = document.createElement('div');
+                pill.className = `layer-badge ${idx === activeLayerIndex ? 'active' : ''}`;
+                pill.innerText = `نص ${idx + 1}`;
+                pill.onclick = () => switchActiveLayer(idx);
+                container.appendChild(pill);
+            });
+
+            document.getElementById('layersCounterText').innerText = `${textLayers.length}/6`;
+            document.getElementById('activeInputLabel').innerText = `النص (طبقة ${activeLayerIndex + 1})`;
+            document.getElementById('stickerTextInput').value = textLayers[activeLayerIndex].text;
+            document.getElementById('charCounter').innerText = `${textLayers[activeLayerIndex].text.length}/20`;
+            
+            const curLayer = textLayers[activeLayerIndex];
+            
+            // تحديث حالة تدرج لوني
+            const gradBtn = document.getElementById('gradientSwitchBtn');
+            const gradBox = document.getElementById('gradientContainerBox');
+            if (curLayer.gradientActive) {
+                gradBtn.classList.add('active'); gradBtn.innerText = 'مفعل'; gradBox.classList.add('active');
+            } else {
+                gradBtn.classList.remove('active'); gradBtn.innerText = 'مطفّأ'; gradBox.classList.remove('active');
+            }
+            document.getElementById('gradientActiveBigCircle').style.background = curLayer.gradientColor;
+            document.getElementById('gradientHexText').innerText = curLayer.gradientColor;
+            applyGradientStyle();
+
+            // تحديث نص منحني
+            const curvedBtn = document.getElementById('curvedSwitchBtn');
+            if (curLayer.curvedActive) { curvedBtn.classList.add('active'); curvedBtn.innerText = 'مفعل'; }
+            else { curvedBtn.classList.remove('active'); curvedBtn.innerText = 'مطفّأ'; }
+
+            // تحديث نص ثلاثي الأبعاد
+            const tdBtn = document.getElementById('tdSwitchBtn');
+            if (curLayer.tdActive) { tdBtn.classList.add('active'); tdBtn.innerText = 'مفعل'; }
+            else { tdBtn.classList.remove('active'); tdBtn.innerText = 'مطفّأ'; }
+
+            let activeText = curLayer.text;
+            let displayText = activeText ? activeText : (selectedTemplateName || 'اكتب اسمك...');
+            const stickerObj = document.getElementById('stickerObject');
+            stickerObj.innerText = displayText;
+        }
+
+        function addNewTextLayer() {
+            if (textLayers.length >= 6) { alert('الحد الأقصى هو 6 طبقات نص!'); return; }
+            textLayers.push({ 
+                id: textLayers.length + 1, 
+                text: '', 
+                color: '#FFFFFF',
+                strokeColor: '#00FF00',
+                strokeWidth: 12,
+                gradientActive: false,
+                gradientColor: '#FFFFFF',
+                curvedActive: false,
+                tdActive: false
+            });
+            activeLayerIndex = textLayers.length - 1;
+            renderLayersUI();
+        }
+
+        function switchActiveLayer(index) {
+            activeLayerIndex = index;
+            renderLayersUI();
+        }
+
+        function toggleEffectsDropdown() {
+            const dropdown = document.getElementById('effectsDropdown');
+            dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function applyAnimationEffect(effectClass, effectName) {
+            const stickerObj = document.getElementById('stickerObject');
+            stickerObj.classList.remove('anim-spin', 'anim-smoke', 'anim-explosion', 'anim-flowers');
+            stickerObj.classList.add('anim-' + effectClass);
+            document.getElementById('effectsCountNum').innerText = '1/4';
+            toggleEffectsDropdown();
+            alert(`تم تطبيق تأثير "${effectName}" بنجاح! ✨`);
+        }
+
+        function updateMotionTimes() {
+            let startVal = parseInt(document.getElementById('startMotionSlider').value);
+            let endVal = parseInt(document.getElementById('endMotionSlider').value);
+            if (startVal > endVal) { startVal = endVal; document.getElementById('startMotionSlider').value = startVal; }
+            document.getElementById('startValText').innerText = startVal + '%';
+            document.getElementById('endValText').innerText = endVal + '%';
+            document.getElementById('timeRangeDisplay').innerText = `${startVal}% - ${endVal}%`;
+        }
 
         function updateUI() {
             document.getElementById('usage-text').innerText = `${usedCount} / ${isVipUser ? '∞' : maxLimit}`;
             document.getElementById('stat-stickers').innerText = usedCount;
-            
             let percentage = isVipUser ? 20 : (usedCount / maxLimit) * 100;
-            if (percentage > 100) percentage = 100;
             document.getElementById('progress-fill').style.width = percentage + '%';
 
             if (isVipUser) {
-                document.getElementById('plan-type').innerText = "الخطة المدفوعة (VIP - غير محدود) 👑";
+                document.getElementById('plan-type').innerText = "الخطة المدفوعة (VIP) 👑";
                 document.getElementById('plan-type').style.color = "#00b4db";
-            } else {
-                document.getElementById('plan-type').innerText = `الخطة المجانية (${maxLimit} ملصق/يوم)`;
-                document.getElementById('plan-type').style.color = "#8c9bae";
             }
         }
 
-        function addSticker() {
-            if (!isVipUser && usedCount >= maxLimit) {
-                alert('عذراً! لقد وصلت للحد الأقصى من الملصقات المسموحة لك اليوم. تواصل مع المطور للاشتراك وزيادة الحد.');
-                return;
-            }
+        function showSection(sectionId) {
+            document.getElementById('create-main-menu').style.display = 'none';
+            document.getElementById('template-section').style.display = 'none';
+            document.getElementById('sticker-editor-section').style.display = 'none';
+            document.getElementById('text-section').style.display = 'none';
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        function selectTemplate(templateName) {
+            selectedTemplateName = templateName;
+            document.getElementById('active-template-title').innerText = templateName;
+            showSection('sticker-editor-section');
+            renderLayersUI();
+        }
+
+        function updateLiveText(val) {
+            if (val.length > 20) { val = val.substring(0, 20); document.getElementById('stickerTextInput').value = val; }
+            textLayers[activeLayerIndex].text = val;
+            document.getElementById('charCounter').innerText = val.length + '/20';
+            let displayText = val ? val : (selectedTemplateName || 'اكتب اسمك...');
+            document.getElementById('stickerObject').innerText = displayText;
+        }
+
+        function togglePlayState() {
+            isPlaying = !isPlaying;
+            document.getElementById('playPauseBtn').innerText = isPlaying ? '⏸' : '▶';
+        }
+
+        function resetStickerPosition() {
+            textLayers[activeLayerIndex].text = '';
+            renderLayersUI();
+        }
+
+        function finalizeSticker() {
+            if (!isVipUser && usedCount >= maxLimit) { alert('عذراً! وصلت للحد الأقصى اليوم.'); return; }
+            usedCount++;
+            localStorage.setItem('user_used_count', usedCount);
+            updateUI();
+            alert('تم تصميم الملصق بنجاح! ✨');
+            showSection('create-main-menu');
+        }
+
+        function addCustomSticker() {
+            if (!isVipUser && usedCount >= maxLimit) { alert('عذراً! وصلت للحد الأقصى اليوم.'); return; }
             usedCount++;
             localStorage.setItem('user_used_count', usedCount);
             updateUI();
@@ -223,30 +936,24 @@
         }
 
         function setLimit(newLimit) {
-            maxLimit = newLimit;
-            isVipUser = false;
+            maxLimit = newLimit; isVipUser = false;
             localStorage.setItem('user_max_limit', maxLimit);
             localStorage.setItem('is_vip', 'false');
             updateUI();
-            alert(`تم تحديث الحد الأقصى للمستخدم إلى ${newLimit} ملصقات يومياً.`);
         }
 
         function makeVIP() {
             isVipUser = true;
             localStorage.setItem('is_vip', 'true');
             updateUI();
-            alert('تم تفعيل حساب VIP غير المحدود بنجاح! 👑');
         }
 
         function switchTab(tabId, element) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             element.classList.add('active');
+            if(tabId === 'create-tab') showSection('create-main-menu');
         }
     </script>
 </body>
