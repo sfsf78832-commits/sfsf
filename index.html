@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticker Studio</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; background: #182533; color: white; }
+        input { padding: 12px; width: 80%; margin: 15px 0; border-radius: 8px; border: 1px solid #2aabee; font-size: 16px; text-align: center; }
+        button { padding: 12px 25px; background: #2aabee; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>صانع الملصقات 🎨</h2>
+    <input type="text" id="stickerText" placeholder="اكتب النص هنا...">
+    <br>
+    <button onclick="sendData()">إرسال للملصق</button>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function sendData() {
+            const text = document.getElementById("stickerText").value;
+            if(!text) return alert("اكتب نصاً أولاً");
+            tg.sendData(JSON.stringify({ text: text }));
+            tg.close();
+        }
+    </script>
+</body>
+</html>
