@@ -3,33 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صنع ملصقات مميزة</title>
+  <title>تجربه صفصف</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Amiri:wght@700&family=Changa:wght@700&family=Reem+Kufi:wght@700&family=Tajawal:wght@700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
     body { background-color: #0c111c; color: #ffffff; padding: 16px; padding-bottom: 90px; }
     
-    /* الهيدر العلوي المطابق للصورة تماماً */
-    .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .header-left { display: flex; align-items: center; gap: 16px; }
-    .header-icon { font-size: 18px; cursor: pointer; color: #ffffff; }
-    .header-title { font-size: 16px; font-weight: 700; color: #ffffff; }
-    .header-right { display: flex; align-items: center; gap: 12px; }
+    /* شاشة القوالب (بدون أي هيدر مكرر، نظيفة تماماً مثل صورتك) */
+    .templates-header-title { text-align: right; margin-bottom: 12px; margin-top: 4px; }
+    .templates-main-title { font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 4px; }
+    .templates-sub-title { font-size: 13px; color: #94a3b8; }
 
-    /* شاشة القوالب المطابقة لصورتك الثانية تماماً */
-    .templates-header-title { text-align: right; margin-bottom: 4px; }
-    .templates-main-title { font-size: 20px; font-weight: 800; color: #ffffff; }
-    .templates-sub-title { font-size: 13px; color: #94a3b8; margin-bottom: 16px; text-align: right; }
-
+    /* زر إرسال ملصق جديد المطابق تماماً لصورتك */
     .add-template-box {
       width: 100%; border: 2px dashed rgba(56, 189, 248, 0.4); background: rgba(30, 41, 59, 0.3);
-      border-radius: 16px; padding: 18px; text-align: center; cursor: pointer; margin-bottom: 20px;
+      border-radius: 16px; padding: 16px; text-align: center; cursor: pointer; margin-bottom: 20px;
       display: flex; align-items: center; justify-content: center; gap: 8px; color: #38bdf8; font-weight: 700; font-size: 14px;
-      transition: 0.2s;
     }
     .add-template-box:active { background: rgba(30, 41, 59, 0.6); }
 
+    /* شبكة القوالب (قالب 1 و قالب 2 بالترتيب الصحيح) */
     .templates-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
     .template-card {
       background: #151c28; border: 1px solid rgba(255, 255, 255, 0.08);
@@ -37,17 +31,22 @@
       align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden;
     }
     .template-card img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0.3; }
+    
+    /* اسم القالب داخل المربع المطابق لصورتك */
     .template-name-badge { 
       position: relative; z-index: 2; font-weight: 700; font-size: 14px; color: #ffffff;
-      background: rgba(15, 23, 42, 0.85); padding: 6px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(15, 23, 42, 0.85); padding: 6px 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
     }
+    
+    /* زر الحذف (✕) باللون الأحمر على اليسار تماماً داخل المربع */
     .delete-template-btn {
       position: absolute; top: 10px; left: 10px; background: #ef4444; color: white;
       border: none; width: 26px; height: 26px; border-radius: 50%; font-size: 12px; cursor: pointer; z-index: 10;
       display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
     }
 
-    /* شاشة التعديل المطابقة للصورة الأولى تماماً */
+    /* شاشة التعديل */
+    .editor-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .preview-box {
       width: 100%; height: 260px; background: #151c28; border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center;
@@ -72,7 +71,7 @@
       width: 8px; height: 8px; background: #0ea5e9; border-radius: 50%; position: absolute; top: 4px; right: 10px;
     }
 
-    /* شريط الأسهم الخمسة بالحجم والترتيب المطابق */
+    /* شريط الأسهم الخمسة */
     .arrows-bar { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
     .arrow-btn {
       flex: 1; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1);
@@ -110,7 +109,6 @@
       border: none; padding: 14px; border-radius: 14px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
     }
 
-    /* نافذة اختيار الخط */
     #fontModal {
       display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #131b2e;
       border-top: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px 20px 0 0;
@@ -137,45 +135,27 @@
 </head>
 <body>
 
-  <!-- شاشة القوالب (المطابقة لصورتك الثانية تماماً) -->
+  <!-- شاشة القوالب الرئيسية (نظيفة وبدون تكرار هيدر) -->
   <div id="templatesScreen" class="screen active">
-    <!-- الهيدر العلوي تماماً مثل صورتك: علامة X على اليسار، اسم البوت في المنتصف، سهم وثلاث نقاط على اليمين -->
-    <div class="top-header">
-      <div class="header-left">
-        <span class="header-icon" onclick="tg.close()">✕</span>
-      </div>
-      <div class="header-title">تجربه صفصف</div>
-      <div class="header-right">
-        <span class="header-icon">⌄</span>
-        <span class="header-icon">⋮</span>
-      </div>
-    </div>
-
     <div class="templates-header-title">
       <div class="templates-main-title">صنع ملصقات مميزة</div>
       <div class="templates-sub-title">اختر قالباً لبدء تصميم الملصق</div>
     </div>
 
-    <!-- زر إرسال ملصق جديد ليصبح قالباً المنقط تماماً مثل صورتك -->
     <div class="add-template-box" onclick="requestAddTemplate()">
       <span>إرسال ملصق جديد ليصبح قالباً</span>
       <span style="font-size: 18px;">+</span>
     </div>
 
-    <!-- قائمة القوالب -->
     <div class="templates-grid" id="templatesContainer"></div>
   </div>
 
-  <!-- شاشة التعديل (المطابقة للصورة الأولى تماماً) -->
+  <!-- شاشة التعديل -->
   <div id="editorScreen" class="screen">
-    <div class="top-header">
-      <div class="header-left">
-        <span class="header-icon" onclick="goBackToTemplates()">⬅️</span>
-      </div>
-      <div class="header-title" id="selectedTemplateTitle">تصميم الملصق</div>
-      <div class="header-right">
-        <span class="header-icon" onclick="finalSubmit()">↗️</span>
-      </div>
+    <div class="editor-top-bar">
+      <div style="font-size: 18px; cursor: pointer;" onclick="goBackToTemplates()">⬅️</div>
+      <div style="font-size: 16px; font-weight: bold;" id="selectedTemplateTitle">تصميم الملصق</div>
+      <div style="font-size: 18px; cursor: pointer;" onclick="finalSubmit()">↗️</div>
     </div>
 
     <div class="preview-box">
@@ -230,9 +210,7 @@
 
   <!-- شاشة الحزم -->
   <div id="packsScreen" class="screen">
-    <div class="top-header">
-      <div class="header-title">حزمي الخاصة</div>
-    </div>
+    <div style="font-size: 18px; font-weight: bold; margin-bottom: 12px;">حزمي الخاصة</div>
     <div style="background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 16px; text-align: center;">
       <div style="font-size: 18px; font-weight: bold; margin-bottom: 6px;">23 حزمة منشأة</div>
       <div style="font-size: 12px; color: #94a3b8;">إدارة وتعديل حزم الملصقات الخاصة بك</div>
@@ -260,8 +238,8 @@
     tg.expand();
 
     let templates = [
-      { id: 2, name: "قالب 2", url: "https://via.placeholder.com/150/1e293b/38bdf8?text=Template+2" },
-      { id: 1, name: "قالب 1", url: "https://via.placeholder.com/150/1e293b/38bdf8?text=Template+1" }
+      { id: 1, name: "قالب 1", url: "https://via.placeholder.com/150/1e293b/38bdf8?text=Template+1" },
+      { id: 2, name: "قالب 2", url: "https://via.placeholder.com/150/1e293b/38bdf8?text=Template+2" }
     ];
 
     const fontsList = [
@@ -287,7 +265,6 @@
         document.getElementById('packsScreen').classList.add('active');
         document.getElementById('nav-packs').classList.add('active');
       } else if(tabName === 'home') {
-        // إذا رغب العضو بالرئيسية يمكن ربطها أو تركها
         document.getElementById('templatesScreen').classList.add('active');
         document.getElementById('nav-create').classList.add('active');
       }
@@ -368,7 +345,6 @@
     }
 
     function rotateText(angleStep) {
-      currentRevenue = 0;
       currentRotation = (currentRotation + angleStep) % 360;
       updateTransform();
     }
