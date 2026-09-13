@@ -10,12 +10,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
     body { background-color: #0c111c; color: #ffffff; padding: 16px; padding-bottom: 90px; }
     
-    /* شاشة القوالب (بدون أي هيدر مكرر، نظيفة تماماً مثل صورتك) */
     .templates-header-title { text-align: right; margin-bottom: 12px; margin-top: 4px; }
     .templates-main-title { font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 4px; }
     .templates-sub-title { font-size: 13px; color: #94a3b8; }
 
-    /* زر إرسال ملصق جديد المطابق تماماً لصورتك */
     .add-template-box {
       width: 100%; border: 2px dashed rgba(56, 189, 248, 0.4); background: rgba(30, 41, 59, 0.3);
       border-radius: 16px; padding: 16px; text-align: center; cursor: pointer; margin-bottom: 20px;
@@ -23,7 +21,6 @@
     }
     .add-template-box:active { background: rgba(30, 41, 59, 0.6); }
 
-    /* شبكة القوالب (قالب 1 و قالب 2 بالترتيب الصحيح) */
     .templates-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
     .template-card {
       background: #151c28; border: 1px solid rgba(255, 255, 255, 0.08);
@@ -32,20 +29,17 @@
     }
     .template-card img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0.3; }
     
-    /* اسم القالب داخل المربع المطابق لصورتك */
     .template-name-badge { 
       position: relative; z-index: 2; font-weight: 700; font-size: 14px; color: #ffffff;
       background: rgba(15, 23, 42, 0.85); padding: 6px 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
     }
     
-    /* زر الحذف (✕) باللون الأحمر على اليسار تماماً داخل المربع */
     .delete-template-btn {
       position: absolute; top: 10px; left: 10px; background: #ef4444; color: white;
       border: none; width: 26px; height: 26px; border-radius: 50%; font-size: 12px; cursor: pointer; z-index: 10;
       display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
     }
 
-    /* شاشة التعديل */
     .editor-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .preview-box {
       width: 100%; height: 260px; background: #151c28; border-radius: 16px;
@@ -71,7 +65,6 @@
       width: 8px; height: 8px; background: #0ea5e9; border-radius: 50%; position: absolute; top: 4px; right: 10px;
     }
 
-    /* شريط الأسهم الخمسة */
     .arrows-bar { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
     .arrow-btn {
       flex: 1; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1);
@@ -121,7 +114,6 @@
       justify-content: space-between; align-items: center; cursor: pointer;
     }
 
-    /* الشريط السفلي للتنقل */
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #0b111b;
       border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-around; align-items: center; z-index: 100;
@@ -135,7 +127,6 @@
 </head>
 <body>
 
-  <!-- شاشة القوالب الرئيسية (نظيفة وبدون تكرار هيدر) -->
   <div id="templatesScreen" class="screen active">
     <div class="templates-header-title">
       <div class="templates-main-title">صنع ملصقات مميزة</div>
@@ -150,7 +141,6 @@
     <div class="templates-grid" id="templatesContainer"></div>
   </div>
 
-  <!-- شاشة التعديل -->
   <div id="editorScreen" class="screen">
     <div class="editor-top-bar">
       <div style="font-size: 18px; cursor: pointer;" onclick="goBackToTemplates()">⬅️</div>
@@ -208,7 +198,6 @@
     <button class="btn-primary" onclick="finalSubmit()">متابعة</button>
   </div>
 
-  <!-- شاشة الحزم -->
   <div id="packsScreen" class="screen">
     <div style="font-size: 18px; font-weight: bold; margin-bottom: 12px;">حزمي الخاصة</div>
     <div style="background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 16px; text-align: center;">
@@ -217,7 +206,6 @@
     </div>
   </div>
 
-  <!-- نافذة اختيار الخط -->
   <div id="fontModal">
     <div class="modal-header">
       <button style="background:none; border:none; color:#94a3b8; font-size:18px; cursor:pointer;" onclick="closeFontModal()">✕</button>
@@ -226,7 +214,6 @@
     <div id="fontListContainer"></div>
   </div>
 
-  <!-- الشريط السفلي للتنقل -->
   <div class="bottom-nav">
     <div class="nav-item" id="nav-packs" onclick="switchTabNav('packs')">📦<span>حزمي</span></div>
     <div class="nav-item active" id="nav-create" onclick="switchTabNav('create')">➕<span>إنشاء ملصق</span></div>
@@ -332,6 +319,7 @@
     function openFontModal() { document.getElementById('fontModal').style.display = 'block'; }
     function closeFontModal() { document.getElementById('fontModal').style.display = 'none'; }
     function selectFont(fontFamily) {
+      document.getElementById('previewTitle')?.style; // safe check
       document.getElementById('previewText').style.fontFamily = fontFamily;
       closeFontModal();
     }
