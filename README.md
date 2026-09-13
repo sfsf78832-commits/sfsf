@@ -3,93 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sticker Hub - صانع ملصقات مميز</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- استيراد خط مناسب وايقونات إذا تحتاج -->
+    <title>مركز الملصقات - صانع ملصقات مميز</title>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #ffffff;
+            font-family: Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 70px;
+        }
+        .app-container {
+            padding: 15px;
+        }
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .hub-title {
+            font-weight: bold;
+            color: #ff9800;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #131826;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #222b3c;
+        }
+        .nav-item {
+            background: none;
+            border: none;
+            color: #8c9bae;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .nav-item.active {
+            color: #ff9800;
+        }
+        .card {
+            background-color: #131826;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- الهيدر العُلوي -->
+        <!-- الهيدر العلوي -->
         <header class="app-header">
             <div class="logo-area">
                 <span class="hub-icon">⚡</span>
                 <span class="hub-title">STICKER HUB</span>
             </div>
-            <div class="top-actions">
-                <button class="send-btn">📤</button>
-            </div>
         </header>
 
-        <!-- بطاقة الحساب والاشتراك -->
-        <div class="profile-card">
-            <div class="user-info">
-                <div class="avatar-container">
-                    <img src="https://via.placeholder.com/50" alt="Avatar" class="avatar">
-                    <span class="status-dot"></span>
+        <!-- صفحة الرئيسية -->
+        <div id="home-tab" class="tab-content active">
+            <div class="card">
+                <h3>أهلاً بك في صانع الملصقات المميز</h3>
+                <p>الملصقات المميزة الاحترافية في التليجرام بلكششن وسورس المساعدة.</p>
+            </div>
+        </div>
+
+        <!-- صفحة إنشاء ملصق -->
+        <div id="create-tab" class="tab-content">
+            <div class="card">
+                <h3>تجربة صفصف - صنع ملصقات مميزة</h3>
+                <p>اختر قالباً لبدء تصميم الملصق</p>
+                <div style="border: 2px dashed #3a4b6c; padding: 20px; border-radius: 10px; margin-top: 10px;">
+                    إرسال ملصق جديد ليصبح قالباً +
                 </div>
-                <div class="user-details">
-                    <h3 class="username">صفصف لـ ۰۰۰۰۰۰</h3>
-                    <p class="plan-status">أنت تستخدم الخطة المجانية الآن</p>
-                </div>
-            </div>
-            <button class="subscribe-btn">
-                <span class="crown">👑</span> اشترك
-            </button>
-        </div>
-
-        <!-- استخدامك اليوم -->
-        <div class="usage-box">
-            <div class="usage-info">
-                <span>استخدامك اليوم</span>
-                <span class="usage-count">2 / 2</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: 100%;"></div>
             </div>
         </div>
 
-        <!-- الإحصائيات (ملصق مصمم وحزمة منشأة) -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon pink-glow">✨</div>
-                <h2 class="stat-number">2</h2>
-                <p class="stat-label">ملصق مصمم</p>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon purple-glow">📦</div>
-                <h2 class="stat-number">23</h2>
-                <p class="stat-label">حزمة منشأة</p>
+        <!-- صفحة حزمي -->
+        <div id="packs-tab" class="tab-content">
+            <div class="card">
+                <h3>حزمي وملصقاتي المنشأة</h3>
+                <p>ليس لديك حزم ملصقات مسجلة حالياً.</p>
             </div>
         </div>
-
-        <!-- البانر الترويجي (فيديو / يوتيوب) -->
-        <div class="promo-banner">
-            <div class="banner-content">
-                <h3>الملصقات المميزة الاحترافية في تليجرام بلاش!</h3>
-                <p class="banner-sub">سورس العمدة</p>
-            </div>
-            <div class="video-preview">
-                <div class="play-button">▶</div>
-            </div>
-        </div>
-
-        <!-- الشريط السفلي (Navigation Bar) -->
-        <nav class="bottom-nav">
-            <a href="#" class="nav-item">
-                <span class="nav-icon">📦</span>
-                <span>حزمي</span>
-            </a>
-            <a href="#" class="nav-item">
-                <span class="nav-icon plus-icon">+</span>
-                <span>إنشاء ملصق</span>
-            </a>
-            <a href="#" class="nav-item active">
-                <span class="nav-icon">🏠</span>
-                <span>الرئيسية</span>
-            </a>
-        </nav>
     </div>
 
+    <!-- الشريط السفلي (Navigation Bar) -->
+    <nav class="bottom-nav">
+        <button class="nav-item" onclick="switchTab('packs-tab', this)">
+            <span>📦</span>
+            <span>حزمي</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('create-tab', this)">
+            <span>➕</span>
+            <span>إنشاء ملصق</span>
+        </button>
+        <button class="nav-item active" onclick="switchTab('home-tab', this)">
+            <span>🏠</span>
+            <span>الرئيسية</span>
+        </button>
+    </nav>
+
+    <script>
+        function switchTab(tabId, element) {
+            // إخفاء كل الصفحات
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // إزالة التفعيل من كل الأزرار
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // إظهار الصفحة المطلوبة وتفعيل زرها
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+    </script>
 </body>
 </html>
