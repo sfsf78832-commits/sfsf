@@ -3,22 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مركز التسوق - مجموعة ملصقات مميزة</title>
+    <title>STICKER HUB - صانع الملصقات</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background-color: #0c111c; color: #ffffff; padding: 16px; padding-bottom: 90px; }
-        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        body { background-color: #0c111c; color: #ffffff; padding: 12px; padding-bottom: 90px; }
+        
+        /* الهيدر */
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .logo-area { display: flex; align-items: center; gap: 8px; }
-        .hub-icon { font-size: 24px; }
-        .hub-title { font-weight: bold; color: #ff9800; font-size: 18px; }
+        .hub-icon { font-size: 22px; }
+        .hub-title { font-weight: 800; color: #ff9800; font-size: 16px; letter-spacing: 0.5px; }
+        .tg-channel-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0088cc; font-size: 18px; text-decoration: none; cursor: pointer; transition: 0.2s; }
+
+        /* كارت البروفايل واشتراك VIP */
+        .profile-card { background: #131826; border: 1px solid #1f293d; border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .profile-info { display: flex; align-items: center; gap: 10px; }
+        .profile-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: #222b3c; border: 1px solid #ff9800; }
+        .profile-name { font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 2px; }
+        .profile-sub { font-size: 12px; color: #8c9bae; }
+        .subscribe-btn { background: linear-gradient(135deg, #00b4db, #0083b0); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; text-decoration: none; box-shadow: 0 4px 12px rgba(0, 180, 219, 0.3); }
+
+        /* كارت الاستخدام اليومي */
+        .usage-card { background: #131826; border: 1px solid #1f293d; border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+        .usage-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #cbd5e1; }
+        .progress-bar-bg { background: #1e293b; height: 8px; border-radius: 4px; overflow: hidden; }
+        .progress-bar-fill { background: linear-gradient(90deg, #ff9800, #ffb74d); height: 100%; width: 0%; border-radius: 4px; transition: width 0.3s ease; }
+
+        /* الإحصائيات */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        .stat-card { background: #131826; border: 1px solid #1f293d; border-radius: 16px; padding: 16px; text-align: center; }
+        .stat-icon { font-size: 20px; margin-bottom: 4px; }
+        .stat-num { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+        .stat-label { font-size: 12px; color: #8c9bae; }
+
+        /* لوحة تحكم المطور السريعة */
+        .dev-panel { background: rgba(255, 152, 0, 0.05); border: 1px dashed #ff9800; border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+        .dev-title { font-size: 13px; font-weight: 700; color: #ff9800; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .dev-controls { display: flex; gap: 8px; }
+        .dev-btn { background: #ff9800; color: #0c111c; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; flex: 1; }
+        .dev-btn:active { opacity: 0.8; }
+
+        /* بانر الإعلانات */
+        .ads-banner { background: #131826; border: 1px solid #1f293d; border-radius: 16px; overflow: hidden; margin-bottom: 15px; position: relative; }
+        .ads-media { width: 100%; height: 160px; object-fit: cover; display: block; background: #000; }
+        .ads-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); font-size: 13px; font-weight: 600; text-align: center; color: #ffb74d; }
+
+        /* التبويبات والمحتوى */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #131826; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #222b3c; z-index: 1000; }
-        .nav-item { background: none; border: none; color: #8c9bae; cursor: pointer; font-size: 14px; display: flex; flex-direction: column; align-items: center; }
-        .nav-item.active { color: #ff9800; }
-        .card { background: #131826; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center; }
+        .inner-card { background: #131826; border: 1px solid #1f293d; border-radius: 16px; padding: 20px; text-align: center; margin-top: 10px; }
+
+        /* شريط التنقل السفلي المحدث بدقة */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #131826; border-top: 1px solid #1f293d; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
+        .nav-item { background: none; border: none; color: #8c9bae; cursor: pointer; font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 600; width: 33.33%; transition: 0.2s; }
+        .nav-item.active { color: #ffffff; }
+        .nav-icon { font-size: 20px; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -29,52 +70,174 @@
             <span class="hub-icon">⚡</span>
             <span class="hub-title">STICKER HUB</span>
         </div>
+        <!-- أيقونة التيليجرام تودّي لقناة التحديثات M_V76 -->
+        <a href="https://t.me/M_V76" target="_blank" class="tg-channel-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-2.01 1.28-5.68 3.77-.54.37-1.03.55-1.47.54-.48-.01-1.4-.27-2.08-.49-.84-.27-1.51-.42-1.45-.89.03-.25.38-.51 1.07-.78 4.18-1.82 6.98-3.02 8.41-3.61 4-.1.66 4.98 1.48 4.98 1.03 0 .35-.1.57-.16z"/></svg>
+        </a>
     </header>
 
-    <!-- الصفحة الرئيسية -->
+    <!-- محتوى تبويب الرئيسية -->
     <div id="home-tab" class="tab-content active">
-        <div class="card">
-            <h3>أهلاً بك في صانع الملصقات المميز</h3>
-            <p>الملصقات المميزة الاحترافية في التليجرام بلكليك وسورس المساعدة.</p>
+        
+        <!-- البروفايل وزر الاشتراك -->
+        <div class="profile-card">
+            <div class="profile-info">
+                <img id="user-avatar" src="https://via.placeholder.com/150" class="profile-avatar" alt="User">
+                <div>
+                    <div id="user-name" class="profile-name">جاري التحميل...</div>
+                    <div id="plan-type" class="profile-sub">الخطة المجانية (2 ملصق/يوم)</div>
+                </div>
+            </div>
+            <a href="https://t.me/r_3_4" target="_blank" class="subscribe-btn">
+                <span>👑</span> اشترك
+            </a>
         </div>
-    </div>
 
-    <!-- صفحة إنشاء ملصق -->
-    <div id="create-tab" class="tab-content">
-        <div class="card">
-            <h3>تجربة مصمم - صنع ملصقات مميزة</h3>
-            <p>انجز قلباً ليند تصميم الملصق.</p>
-            <div style="border: 2px dashed #3a4b6c; padding: 20px; border-radius: 10px; margin-top: 10px;">
-                إرسال ملصق جديد ليصبح الباقي
+        <!-- لوحة تحكم المطور -->
+        <div class="dev-panel">
+            <div class="dev-title">
+                <span>🛠️ لوحة تحكم المطور</span>
+                <span style="font-size: 11px; color: #8c9bae;">تحكم فوري</span>
+            </div>
+            <div class="dev-controls">
+                <button class="dev-btn" onclick="setLimit(5)">زيادة إلى 5</button>
+                <button class="dev-btn" onclick="setLimit(10)">زيادة إلى 10</button>
+                <button class="dev-btn" onclick="makeVIP()" style="background: #00b4db; color: #fff;">تفعيل VIP (غير محدود)</button>
             </div>
         </div>
+
+        <!-- عداد الاستخدام اليومي -->
+        <div class="usage-card">
+            <div class="usage-header">
+                <span>استخدامك اليوم</span>
+                <span id="usage-text">0 / 2</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="progress-fill" class="progress-bar-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <!-- الإحصائيات -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">✨</div>
+                <div id="stat-stickers" class="stat-num">0</div>
+                <div class="stat-label">ملصق مصمم</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-num">1</div>
+                <div class="stat-label">حزمة منشأة</div>
+            </div>
+        </div>
+
+        <!-- بانر الإعلانات -->
+        <div class="ads-banner">
+            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=60" class="ads-media" alt="Ad">
+            <div class="ads-overlay">⚡ الملصقات المميزة الاحترافية في تليجرام بلاش!</div>
+        </div>
+
     </div>
 
-    <!-- صفحة حزمي -->
-    <div id="packs-tab" class="tab-content">
-        <div class="card">
-            <h3>حزمي وملصقاتي المسجلة</h3>
-            <p>ليس لديك حزم ملصقات مسجلة حالياً.</p>
+    <!-- محتوى تبويب إنشاء ملصق -->
+    <div id="create-tab" class="tab-content">
+        <div class="inner-card">
+            <h3>قسم إنشاء ملصق جديد</h3>
+            <p style="color: #8c9bae; margin-top: 8px; font-size: 13px;">قم برفع صورتك أو تصميم ملصقك الخاص بكل سهولة.</p>
+            <button onclick="addSticker()" style="margin-top: 15px; background: #ff9800; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; color: #0c111c; cursor: pointer;">تصميم ملصق جديد ➕</button>
         </div>
     </div>
 
-    <!-- الشريط السفلي (Navigation Bar) -->
+    <!-- محتوى تبويب حزمي -->
+    <div id="packs-tab" class="tab-content">
+        <div class="inner-card">
+            <h3>حزمي وملصقاتي المسجلة</h3>
+            <p style="color: #8c9bae; margin-top: 8px; font-size: 13px;">لديك حزمة واحدة مسجلة حالياً.</p>
+        </div>
+    </div>
+
+    <!-- الشريط السفلي المطابق للترتيب المطلوب 100% -->
     <nav class="bottom-nav">
         <button class="nav-item" onclick="switchTab('packs-tab', this)">
-            <span>📦</span>
+            <span class="nav-icon">📦</span>
             <span>حزمي</span>
         </button>
         <button class="nav-item" onclick="switchTab('create-tab', this)">
-            <span>➕</span>
+            <span class="nav-icon">➕</span>
             <span>إنشاء ملصق</span>
         </button>
         <button class="nav-item active" onclick="switchTab('home-tab', this)">
-            <span>🏠</span>
+            <span class="nav-icon">🏠</span>
             <span>الرئيسية</span>
         </button>
     </nav>
 
     <script>
+        let maxLimit = localStorage.getItem('user_max_limit') ? parseInt(localStorage.getItem('user_max_limit')) : 2;
+        let usedCount = localStorage.getItem('user_used_count') ? parseInt(localStorage.getItem('user_used_count')) : 0;
+        let isVipUser = localStorage.getItem('is_vip') === 'true';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const tg = window.Telegram.WebApp;
+            tg.expand();
+            
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ') || 'مستخدم تيليجرام';
+                document.getElementById('user-name').innerText = fullName;
+                if (user.photo_url) {
+                    document.getElementById('user-avatar').src = user.photo_url;
+                }
+            } else {
+                document.getElementById('user-name').innerText = "المطور (تجريبي)";
+            }
+            updateUI();
+        });
+
+        function updateUI() {
+            document.getElementById('usage-text').innerText = `${usedCount} / ${isVipUser ? '∞' : maxLimit}`;
+            document.getElementById('stat-stickers').innerText = usedCount;
+            
+            let percentage = isVipUser ? 20 : (usedCount / maxLimit) * 100;
+            if (percentage > 100) percentage = 100;
+            document.getElementById('progress-fill').style.width = percentage + '%';
+
+            if (isVipUser) {
+                document.getElementById('plan-type').innerText = "الخطة المدفوعة (VIP - غير محدود) 👑";
+                document.getElementById('plan-type').style.color = "#00b4db";
+            } else {
+                document.getElementById('plan-type').innerText = `الخطة المجانية (${maxLimit} ملصق/يوم)`;
+                document.getElementById('plan-type').style.color = "#8c9bae";
+            }
+        }
+
+        function addSticker() {
+            if (!isVipUser && usedCount >= maxLimit) {
+                alert('عذراً! لقد وصلت للحد الأقصى من الملصقات المسموحة لك اليوم. تواصل مع المطور للاشتراك وزيادة الحد.');
+                return;
+            }
+            usedCount++;
+            localStorage.setItem('user_used_count', usedCount);
+            updateUI();
+            alert('تم تصميم الملصق بنجاح! ✨');
+        }
+
+        function setLimit(newLimit) {
+            maxLimit = newLimit;
+            isVipUser = false;
+            localStorage.setItem('user_max_limit', maxLimit);
+            localStorage.setItem('is_vip', 'false');
+            updateUI();
+            alert(`تم تحديث الحد الأقصى للمستخدم إلى ${newLimit} ملصقات يومياً.`);
+        }
+
+        function makeVIP() {
+            isVipUser = true;
+            localStorage.setItem('is_vip', 'true');
+            updateUI();
+            alert('تم تفعيل حساب VIP غير المحدود بنجاح! 👑');
+        }
+
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
