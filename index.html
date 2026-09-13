@@ -5,187 +5,471 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>STICKER HUB</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- استيراد خطوط عربية متنوعة -->
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@700&family=Changa:wght@700&family=Reem+Kufi:wght@700&family=Tajawal:wght@700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #0d131d; color: #ffffff; padding: 16px; padding-bottom: 90px; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .logo { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 18px; letter-spacing: 1px; }
-    .screen { display: none; }
-    .screen.active { display: block; }
-    .banner { width: 100%; height: 90px; border-radius: 16px; background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 50%, #0f172a 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); font-weight: bold; color: #38bdf8; }
-    .section-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-    .section-subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 16px; }
-    .card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 18px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; cursor: pointer; backdrop-filter: blur(10px); }
-    .card-info { display: flex; flex-direction: column; gap: 4px; }
-    .card-title { font-size: 16px; font-weight: bold; }
-    .card-desc { font-size: 13px; color: #64748b; }
-    .card-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; font-size: 20px; color: #f59e0b; }
-    .preview-box { width: 100%; height: 220px; background: #151c28; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 16px; overflow: hidden; }
-    #previewText { font-size: 24px; color: #ffffff; text-align: center; word-break: break-all; padding: 10px; }
-    .input-group { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; margin-bottom: 16px; }
-    .input-group input, .input-group select { width: 100%; background: transparent; border: none; color: white; font-size: 15px; outline: none; text-align: right; }
-    .input-group select option { background: #1e293b; color: white; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    body { background-color: #0c111c; color: #ffffff; padding: 16px; padding-bottom: 90px; }
+    
+    .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .logo-area { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 16px; color: #ffffff; }
+    .logo-area span { color: #f59e0b; }
+    .top-icon-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #38bdf8; }
+
+    /* بانر الإعلان العلوي */
+    .vip-banner {
+      width: 100%; background: linear-gradient(135deg, #1e1b4b, #311042);
+      border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 16px; padding: 12px;
+      margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
+      position: relative; overflow: hidden; cursor: pointer; text-align: center;
+    }
+
+    /* بطاقة الملف الشخصي والاشتراك */
+    .profile-card {
+      background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px; padding: 12px 14px; margin-bottom: 12px; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    .user-info { display: flex; align-items: center; gap: 10px; flex-direction: row-reverse; text-align: right; }
+    .user-avatar { width: 42px; height: 42px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 2px solid #22c55e; overflow: hidden; }
+    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .user-details .username { font-weight: bold; font-size: 13px; color: #f8fafc; max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-details .plan-status { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+    
+    .subscribe-btn {
+      background: #0ea5e9; color: white; border: none;
+      padding: 8px 18px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;
+      display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    }
+
+    /* شريط الاستخدام اليومي */
+    .usage-box {
+      background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px; padding: 14px; margin-bottom: 12px;
+    }
+    .usage-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #cbd5e1; }
+    .progress-bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; }
+    .progress-bar-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #0ea5e9, #38bdf8); border-radius: 3px; }
+
+    /* الإحصائيات */
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px; padding: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .stat-number { font-size: 18px; font-weight: bold; color: #ffffff; }
+    .stat-label { font-size: 11px; color: #94a3b8; }
+
+    /* البانر الإعلاني السفلي */
+    .promo-banner {
+      width: 100%; background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px; overflow: hidden; position: relative; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; padding: 12px;
+    }
+    .promo-text { font-size: 12px; font-weight: bold; line-height: 1.5; color: #f1f5f9; text-align: right; }
+    .promo-text span { display: block; font-size: 11px; color: #94a3b8; }
+
+    /* شاشة القوالب */
+    .templates-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+    .template-card {
+      background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px; height: 140px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden;
+    }
+    .template-card img { width: 100%; height: 100%; object-fit: cover; position: absolute; opacity: 0.6; }
+    .template-name { position: relative; z-index: 2; font-weight: bold; font-size: 14px; background: rgba(0, 0, 0, 0.6); padding: 4px 10px; border-radius: 8px; }
+    .delete-btn {
+      position: absolute; top: 8px; left: 8px; background: rgba(239, 68, 68, 0.8); color: white;
+      border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 12px; cursor: pointer; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .add-template-btn {
+      width: 100%; background: rgba(56, 189, 248, 0.1); border: 2px dashed #38bdf8; color: #38bdf8;
+      padding: 14px; border-radius: 14px; font-weight: bold; text-align: center; cursor: pointer; margin-bottom: 20px;
+    }
+
+    /* شاشة التعديل */
+    .preview-box {
+      width: 100%; height: 220px; background: #151c28; border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center;
+      justify-content: center; margin-bottom: 16px; position: relative; overflow: hidden;
+    }
+    #previewImage { width: 100%; height: 100%; object-fit: contain; position: absolute; }
+    #previewText {
+      position: absolute; font-size: 24px; color: #ffffff; text-align: center;
+      word-break: break-all; padding: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      transform: translate(0px, 0px);
+    }
+
+    .position-controls {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; background: rgba(30, 41, 59, 0.4); padding: 12px; border-radius: 12px;
+    }
+    .pos-btn {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white; padding: 10px; border-radius: 8px; font-size: 16px; cursor: pointer; text-align: center;
+    }
+    .pos-btn:active { background: #0284c7; }
+
+    .input-group {
+      background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px; padding: 10px 14px; margin-bottom: 6px; display: flex; align-items: center;
+    }
+    .input-group input {
+      width: 100%; background: transparent; border: none; color: white; font-size: 15px; outline: none; text-align: right;
+    }
+    .t-icon-btn {
+      background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3);
+      width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: #38bdf8; font-weight: bold; cursor: pointer; margin-left: 10px; flex-shrink: 0;
+    }
+    .counter-text { font-size: 11px; color: #64748b; margin-bottom: 16px; text-align: right; padding-right: 4px; }
+
+    #fontModal {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #131b2e;
+      border-top: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px 20px 0 0;
+      padding: 20px; z-index: 1000; max-height: 70vh; overflow-y: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; }
+    .modal-title { font-size: 16px; font-weight: bold; color: #ffffff; }
+    .close-modal { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
+
+    .font-option-card {
+      background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 10px; display: flex;
+      justify-content: space-between; align-items: center; cursor: pointer;
+    }
+    .font-label { font-size: 12px; color: #94a3b8; }
+    .font-preview-sample { font-size: 20px; color: #ffffff; }
+
     .tabs-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; }
-    .tab-btn { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8; padding: 8px 16px; border-radius: 20px; font-size: 13px; white-space: nowrap; cursor: pointer; }
+    .tab-btn {
+      background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8; padding: 8px 16px; border-radius: 20px; font-size: 13px; white-space: nowrap; cursor: pointer;
+    }
     .tab-btn.active { background: #0284c7; color: white; border-color: #38bdf8; }
     .control-panel { background: rgba(30, 41, 59, 0.5); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
-    .control-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; color: #cbd5e1; }
-    .control-row input[type="range"] { width: 60%; }
+    .control-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #cbd5e1; }
     .control-row input[type="color"] { border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; background: none; }
-    .btn-primary { width: 100%; background: linear-gradient(135deg, #0284c7, #2563eb); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4); margin-bottom: 10px; }
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #0f172a; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-    .nav-item { display: flex; flexDirection: column; align-items: center; gap: 4px; color: #64748b; font-size: 12px; cursor: pointer; }
+
+    .btn-primary {
+      width: 100%; background: linear-gradient(135deg, #0284c7, #2563eb); color: white;
+      border: none; padding: 14px; border-radius: 14px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+    }
+    .back-link { color: #38bdf8; font-size: 14px; cursor: pointer; margin-bottom: 12px; display: inline-block; }
+
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: #0b111b;
+      border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-around; align-items: center; z-index: 100;
+    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #64748b; font-size: 12px; cursor: pointer; }
     .nav-item.active { color: #38bdf8; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
   </style>
 </head>
 <body>
 
   <!-- الشاشة الرئيسية -->
   <div id="homeScreen" class="screen active">
-    <div class="header">
-      <div class="logo"><span>👑</span> STICKER HUB</div>
+    <div class="top-header">
+      <div class="logo-area"><span>👑</span> STICKER HUB</div>
+      <div class="top-icon-btn" onclick="openOwnerPanel()" title="لوحة المالك">⚙️</div>
     </div>
-    <div class="section-title">صنع ملصقات مميز...</div>
-    <div class="section-subtitle">اختر قالبأ</div>
-    <div class="banner">✨ اشترك بعضوية VIP</div>
-    <div class="card" onclick="goToEditor()">
-      <div class="card-info">
-        <div class="card-title">إنشاء من قالب</div>
-        <div class="card-desc">اختر قالب وأضف اسمك...</div>
+
+    <!-- بانر الإعلان العلوي -->
+    <div class="vip-banner" onclick="window.open('https://t.me/r_3_4', '_blank')">
+      <div style="font-size: 13px; font-weight: bold; color: #e2e8f0; width: 100%;">
+        <span style="color: #c084fc; font-size: 14px; margin-bottom: 2px; display: block;">📢 اعلن هنا</span>
+        مميزات حصرية • خدمات أسرع • محتوى مميز
       </div>
-      <div class="card-icon">✨</div>
+    </div>
+
+    <!-- بطاقة حساب المستخدم وزر الاشتراك الموجه لحسابك r_3_4 -->
+    <div class="profile-card">
+      <button class="subscribe-btn" onclick="openMyAccount()">👑 اشترك</button>
+      <div class="user-info">
+        <div class="user-details" style="text-align: right;">
+          <div class="username" id="userNameDisplay">جاري التحميل...</div>
+          <div class="plan-status">انت تستخدم الخطة المجانية الان</div>
+        </div>
+        <div class="user-avatar" id="userAvatarContainer">👤</div>
+      </div>
+    </div>
+
+    <!-- شريط الاستخدام اليومي (2 / 2) -->
+    <div class="usage-box">
+      <div class="usage-header">
+        <span>استخدامك اليومي</span>
+        <span id="usageCounterText">2 / 2</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="usageBarFill" style="width: 100%;"></div>
+      </div>
+    </div>
+
+    <!-- الإحصائيات -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">2</div>
+        <div class="stat-label">ملصق مصمم</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">23</div>
+        <div class="stat-label">حزمة منشأة</div>
+      </div>
+    </div>
+
+    <!-- البانر السفلي -->
+    <div class="promo-banner">
+      <div style="background: #ef4444; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">▶</div>
+      <div class="promo-text">
+        الملصقات المميزة الاحترافية في تليجرام بلاش!
+        <span>سورس العمدة • 38 مشتركاً</span>
+      </div>
     </div>
   </div>
 
-  <!-- شاشة تصميم الملصق -->
+  <!-- شاشة القوالب -->
+  <div id="createScreen" class="screen">
+    <div class="title-section" style="margin-bottom: 12px;">
+      <div class="main-title" style="font-size: 18px; font-weight: 800;">صنع ملصقات مميزة</div>
+      <div class="sub-title" style="font-size: 12px; color: #94a3b8;">اختر قالباً لبدء تصميم الملصق</div>
+    </div>
+    <div class="add-template-btn" onclick="requestAddTemplate()">➕ إرسال ملصق جديد ليصبح قالباً</div>
+    <div class="templates-grid" id="templatesContainer"></div>
+  </div>
+
+  <!-- شاشة الحزم -->
+  <div id="packsScreen" class="screen">
+    <div class="title-section" style="margin-bottom: 12px;">
+      <div class="main-title" style="font-size: 18px; font-weight: 800;">حزمي الخاصة</div>
+      <div class="sub-title" style="font-size: 12px; color: #94a3b8;">إدارة وتعديل حزم الملصقات الخاصة بك</div>
+    </div>
+    <div class="stat-card" style="margin-bottom: 12px;">
+      <div class="stat-number">23 حزمة</div>
+      <div class="stat-label">إجمالي الحزم المُنشأة</div>
+    </div>
+  </div>
+
+  <!-- شاشة التعديل -->
   <div id="editorScreen" class="screen">
-    <div class="header">
-      <div class="logo" onclick="goHome()" style="cursor: pointer;"><span>⬅️</span> تصميم الملصق</div>
-    </div>
-    <div class="preview-box">
-      <div id="previewText">اكتب اسمك هنا...</div>
-    </div>
-    <div class="input-group">
-      <input type="text" id="stickerInput" placeholder="اكتب النص هنا..." oninput="updateText(this.value)">
+    <div class="back-link" onclick="switchTabNav('create')">⬅️ رجوع للقوالب</div>
+    <div class="title-section">
+      <div class="main-title" id="selectedTemplateTitle">تصميم الملصق</div>
     </div>
 
-    <!-- شريط الأدوات -->
+    <div class="preview-box">
+      <img id="previewImage" src="" style="display:none;">
+      <div id="previewText">ابجد</div>
+    </div>
+
+    <div class="position-controls">
+      <div></div>
+      <button class="pos-btn" onclick="moveText(0, -10)">⬆️ فوق</button>
+      <div></div>
+      <button class="pos-btn" onclick="moveText(-10, 0)">➡️ يمين</button>
+      <button class="pos-btn" onclick="resetPosition()">⏺️ إرجاع</button>
+      <button class="pos-btn" onclick="moveText(10, 0)">⬅️ يسار</button>
+      <div></div>
+      <button class="pos-btn" onclick="moveText(0, 10)">⬇️ تحت</button>
+      <div></div>
+    </div>
+
+    <div class="input-group">
+      <div class="t-icon-btn" onclick="openFontModal()">T</div>
+      <input type="text" id="stickerInput" placeholder="اضغط هنا للكتابة..." maxlength="20" oninput="updateText(this.value); updateCounter(this.value)">
+    </div>
+    <div class="counter-text" id="charCounter">0/20</div>
+
     <div class="tabs-bar">
-      <div class="tab-btn active" onclick="switchTab(this, 'colorTab')">لون الخط</div>
-      <div class="tab-btn" onclick="switchTab(this, 'zoomTab')">الزوم</div>
-      <div class="tab-btn" onclick="switchTab(this, 'sizeTab')">حجم الخط</div>
+      <div class="tab-btn active" onclick="switchControlTab(this, 'colorTab')">لون الخط</div>
+      <div class="tab-btn" onclick="switchControlTab(this, 'sizeTab')">حجم الخط</div>
     </div>
 
     <div class="control-panel">
-      <div id="colorTab" class="tab-content">
-        <div class="control-row">
-          <span>لون النص</span>
-          <input type="color" id="textColorPicker" value="#ffffff" oninput="changeColor(this.value)">
-        </div>
+      <div id="colorTab" class="control-row">
+        <span>لون النص</span>
+        <input type="color" id="textColorPicker" value="#ffffff" oninput="changeColor(this.value)">
       </div>
-      <div id="zoomTab" class="tab-content" style="display: none;">
-        <div class="control-row">
-          <span>تكبير / تصغير</span>
-          <input type="range" min="0.5" max="2" step="0.1" value="1" oninput="changeZoom(this.value)">
-        </div>
-      </div>
-      <div id="sizeTab" class="tab-content" style="display: none;">
-        <div class="control-row">
-          <span>حجم الخط</span>
-          <input type="range" min="14" max="50" value="24" oninput="changeSize(this.value)">
-        </div>
+      <div id="sizeTab" class="control-row" style="display: none;">
+        <span>حجم الخط</span>
+        <input type="range" min="14" max="50" value="24" oninput="changeSize(this.value)">
       </div>
     </div>
 
-    <button class="btn-primary" onclick="openPackModal()">متابعة (اختيار الحزمة)</button>
+    <button class="btn-primary" onclick="finalSubmit()">إتمام وإنشاء الملصق</button>
   </div>
 
-  <!-- شاشة اختيار أو إنشاء حزمة الملصقات -->
-  <div id="packScreen" class="screen">
-    <div class="header">
-      <div class="logo" onclick="goToEditor()" style="cursor: pointer;"><span>⬅️</span> حزمة الملصقات</div>
+  <!-- نافذة اختيار الخط -->
+  <div id="fontModal">
+    <div class="modal-header">
+      <button class="close-modal" onclick="closeFontModal()">✕</button>
+      <div class="modal-title">اختر الخط</div>
     </div>
-    <div class="section-title">إدارة حزمة الملصقات</div>
-    <div class="section-subtitle">اختر الحزمة الحالية أو أنشئ حزمة جديدة</div>
-
-    <div class="input-group">
-      <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">اختر حزمة موجودة:</label>
-      <select id="existingPacks">
-        <option value="new">➕ إنشاء حزمة جديدة...</option>
-        <option value="pack_1">حزمة ملصقاتي الأولى (MyPack1)</option>
-      </select>
-    </div>
-
-    <div class="input-group" id="newPackGroup">
-      <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">اسم الحزمة الجديدة:</label>
-      <input type="text" id="newPackNameInput" placeholder="مثال: MyStickers_Bot">
-    </div>
-
-    <button class="btn-primary" onclick="finalSubmit()">إنشاء الحزمة وإرسال الملصق</button>
+    <div id="fontListContainer"></div>
   </div>
 
-  <!-- الشريط السفلي -->
+  <!-- الشريط السفلي للتنقل -->
   <div class="bottom-nav">
-    <div class="nav-item" onclick="goHome()"><span>🏠</span><span>الرئيسية</span></div>
-    <div class="nav-item active"><span>➕</span><span>إنشاء ملصق</span></div>
-    <div class="nav-item"><span>📦</span><span>حزمي</span></div>
+    <div class="nav-item" id="nav-packs" onclick="switchTabNav('packs')">📦<span>حزمي</span></div>
+    <div class="nav-item" id="nav-create" onclick="switchTabNav('create')">➕<span>إنشاء ملصق</span></div>
+    <div class="nav-item active" id="nav-home" onclick="switchTabNav('home')">🏠<span>الرئيسية</span></div>
   </div>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    function goToEditor() {
-      document.getElementById('homeScreen').classList.remove('active');
-      document.getElementById('packScreen').classList.remove('active');
+    // جلب معلومات المستخدم من تليجرام وعرض اسمه وصورته الشخصية تلقائياً
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      const user = tg.initDataUnsafe.user;
+      document.getElementById('userNameDisplay').innerText = user.first_name || "مستخدم تليجرام";
+      if (user.photo_url) {
+        document.getElementById('userAvatarContainer').innerHTML = `<img src="${user.photo_url}" alt="User">`;
+      }
+    }
+
+    // دالة التوجيه لحسابك الشخصي r_3_4 عند الضغط على زر اشترك
+    function openMyAccount() {
+      window.open('https://t.me/r_3_4', '_blank');
+    }
+
+    let templates = [
+      { id: 1, name: "قالب 1", url: "https://via.placeholder.com/150/1e293b/38bdf8?text=Template+1" },
+      { id: 2, name: "قالب 2", url: "https://via.placeholder.com/150/1e293b/f59e0b?text=Template+2" }
+    ];
+
+    const fontsList = [
+      { id: 1, name: "خط رقم 1", family: "'Amiri', serif" },
+      { id: 2, name: "خط رقم 2", family: "'Cairo', sans-serif" },
+      { id: 3, name: "خط رقم 3", family: "'Changa', sans-serif" },
+      { id: 5, name: "خط رقم 5", family: "'Reem Kufi', sans-serif" },
+      { id: 6, name: "خط رقم 6", family: "'Tajawal', sans-serif" }
+    ];
+
+    let posX = 0, posY = 0;
+    let chosenTemplate = "";
+
+    function switchTabNav(tabName) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+      if(tabName === 'home') {
+        document.getElementById('homeScreen').classList.add('active');
+        document.getElementById('nav-home').classList.add('active');
+      } else if(tabName === 'create') {
+        document.getElementById('createScreen').classList.add('active');
+        document.getElementById('nav-create').classList.add('active');
+      } else if(tabName === 'packs') {
+        document.getElementById('packsScreen').classList.add('active');
+        document.getElementById('nav-packs').classList.add('active');
+      }
+    }
+
+    function renderTemplates() {
+      const container = document.getElementById('templatesContainer');
+      container.innerHTML = "";
+      templates.forEach(t => {
+        const card = document.createElement('div');
+        card.className = 'template-card';
+        card.innerHTML = `
+          <button class="delete-btn" onclick="event.stopPropagation(); deleteTemplate(${t.id})">✕</button>
+          <img src="${t.url}" alt="${t.name}">
+          <span class="template-name">${t.name}</span>
+        `;
+        card.onclick = () => selectTemplate(t.name, t.url);
+        container.appendChild(card);
+      });
+    }
+
+    function renderFonts() {
+      const container = document.getElementById('fontListContainer');
+      container.innerHTML = "";
+      fontsList.forEach(f => {
+        const item = document.createElement('div');
+        item.className = 'font-option-card';
+        item.onclick = () => selectFont(f.family);
+        item.innerHTML = `
+          <div class="font-preview-sample" style="font-family: ${f.family};">ابجد ABC</div>
+          <div class="font-label">${f.name}</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function selectTemplate(name, imgUrl) {
+      chosenTemplate = name;
+      document.getElementById('selectedTemplateTitle').innerText = name;
+      const img = document.getElementById('previewImage');
+      img.src = imgUrl;
+      img.style.display = 'block';
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('editorScreen').classList.add('active');
     }
 
-    function goHome() {
-      document.getElementById('editorScreen').classList.remove('active');
-      document.getElementById('packScreen').classList.remove('active');
-      document.getElementById('homeScreen').classList.add('active');
-    }
-
-    function openPackModal() {
-      const text = document.getElementById('stickerInput').value;
-      if(!text) {
-        alert('الرجاء كتابة النص أولاً!');
-        return;
+    function deleteTemplate(id) {
+      if(confirm('هل تريد حذف هذا القالب؟')) {
+        templates = templates.filter(t => t.id !== id);
+        renderTemplates();
+        tg.sendData(JSON.stringify({ action: 'delete_template', template_id: id }));
       }
-      document.getElementById('editorScreen').classList.remove('active');
-      document.getElementById('packScreen').classList.add('active');
     }
 
-    function updateText(val) {
-      document.getElementById('previewText').innerText = val ? val : "اكتب اسمك هنا...";
+    function requestAddTemplate() {
+      tg.sendData(JSON.stringify({ action: 'request_add_template' }));
+      tg.close();
     }
 
-    function switchTab(element, tabId) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
-      element.classList.add('active');
-      document.getElementById(tabId).style.display = 'block';
+    function openFontModal() { document.getElementById('fontModal').style.display = 'block'; }
+    function closeFontModal() { document.getElementById('fontModal').style.display = 'none'; }
+    function selectFont(fontFamily) {
+      document.getElementById('previewText').style.fontFamily = fontFamily;
+      closeFontModal();
+    }
+
+    function updateText(val) { document.getElementById('previewText').innerText = val ? val : "ابجد"; }
+    function updateCounter(val) { document.getElementById('charCounter').innerText = val.length + '/20'; }
+
+    function moveText(x, y) {
+      posX += x; posY += y;
+      document.getElementById('previewText').style.transform = `translate(${posX}px, ${posY}px)`;
+    }
+
+    function resetPosition() {
+      posX = 0; posY = 0;
+      document.getElementById('previewText').style.transform = `translate(0px, 0px)`;
     }
 
     function changeColor(color) { document.getElementById('previewText').style.color = color; }
-    function changeZoom(scale) { document.getElementById('previewText').style.transform = `scale(${scale})`; }
     function changeSize(size) { document.getElementById('previewText').style.fontSize = size + 'px'; }
 
+    function switchControlTab(element, tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.control-panel > div').forEach(div => div.style.display = 'none');
+      element.classList.add('active');
+      document.getElementById(tabId).style.display = 'flex';
+    }
+
+    function openOwnerPanel() {
+      let pass = prompt('أدخل رمز المالك للتحكم بالاستخدامات:');
+      if(pass) {
+        tg.sendData(JSON.stringify({ action: 'owner_panel', password: pass }));
+      }
+    }
+
     function finalSubmit() {
-      const text = document.getElementById('stickerInput').value;
-      const selectedPack = document.getElementById('existingPacks').value;
-      const newPackName = document.getElementById('newPackNameInput').value;
-
-      let packChoice = selectedPack === 'new' ? (newPackName || 'DefaultPack') : selectedPack;
-
       tg.sendData(JSON.stringify({
-        action: 'create_sticker_pack',
-        text: text,
-        pack_name: packChoice
+        action: 'create_sticker',
+        template: chosenTemplate,
+        text: document.getElementById('stickerInput').value,
+        x: posX,
+        y: posY
       }));
       tg.close();
     }
+
+    renderTemplates();
+    renderFonts();
   </script>
 </body>
 </html>
