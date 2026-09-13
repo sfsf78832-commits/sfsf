@@ -3,111 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>STICKER HUB</title>
+  <title>صنع ملصقات مميزة</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- استيراد خطوط عربية متنوعة -->
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@700&family=Changa:wght@700&family=Reem+Kufi:wght@700&family=Tajawal:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Amiri:wght@700&family=Changa:wght@700&family=Reem+Kufi:wght@700&family=Tajawal:wght@700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
     body { background-color: #0c111c; color: #ffffff; padding: 16px; padding-bottom: 90px; }
     
-    .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .logo-area { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 16px; color: #ffffff; }
-    .logo-area span { color: #f59e0b; }
-    .top-icon-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #38bdf8; }
+    /* الهيدر العلوي المطابق للصورة تماماً */
+    .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header-icon { font-size: 18px; cursor: pointer; color: #ffffff; }
+    .header-title { font-size: 16px; font-weight: 700; color: #ffffff; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
 
-    /* بانر الإعلان العلوي */
-    .vip-banner {
-      width: 100%; background: linear-gradient(135deg, #1e1b4b, #311042);
-      border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 16px; padding: 12px;
-      margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
-      position: relative; overflow: hidden; cursor: pointer; text-align: center;
-    }
+    /* شاشة القوالب المطابقة لصورتك الثانية تماماً */
+    .templates-header-title { text-align: right; margin-bottom: 4px; }
+    .templates-main-title { font-size: 20px; font-weight: 800; color: #ffffff; }
+    .templates-sub-title { font-size: 13px; color: #94a3b8; margin-bottom: 16px; text-align: right; }
 
-    /* بطاقة الملف الشخصي والاشتراك */
-    .profile-card {
-      background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px; padding: 12px 14px; margin-bottom: 12px; display: flex;
-      justify-content: space-between; align-items: center;
+    .add-template-box {
+      width: 100%; border: 2px dashed rgba(56, 189, 248, 0.4); background: rgba(30, 41, 59, 0.3);
+      border-radius: 16px; padding: 18px; text-align: center; cursor: pointer; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center; gap: 8px; color: #38bdf8; font-weight: 700; font-size: 14px;
+      transition: 0.2s;
     }
-    .user-info { display: flex; align-items: center; gap: 10px; flex-direction: row-reverse; text-align: right; }
-    .user-avatar { width: 42px; height: 42px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 2px solid #22c55e; overflow: hidden; }
-    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .user-details .username { font-weight: bold; font-size: 13px; color: #f8fafc; max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-details .plan-status { font-size: 10px; color: #94a3b8; margin-top: 2px; }
-    
-    .subscribe-btn {
-      background: #0ea5e9; color: white; border: none;
-      padding: 8px 18px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;
-      display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
-    }
+    .add-template-box:active { background: rgba(30, 41, 59, 0.6); }
 
-    /* شريط الاستخدام اليومي */
-    .usage-box {
-      background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px; padding: 14px; margin-bottom: 12px;
-    }
-    .usage-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #cbd5e1; }
-    .progress-bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; }
-    .progress-bar-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #0ea5e9, #38bdf8); border-radius: 3px; }
-
-    /* الإحصائيات */
-    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
-    .stat-card {
-      background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px; padding: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;
-    }
-    .stat-number { font-size: 18px; font-weight: bold; color: #ffffff; }
-    .stat-label { font-size: 11px; color: #94a3b8; }
-
-    /* البانر الإعلاني السفلي */
-    .promo-banner {
-      width: 100%; background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px; overflow: hidden; position: relative; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; padding: 12px;
-    }
-    .promo-text { font-size: 12px; font-weight: bold; line-height: 1.5; color: #f1f5f9; text-align: right; }
-    .promo-text span { display: block; font-size: 11px; color: #94a3b8; }
-
-    /* خيارات شاشة إنشاء ملصق الرئيسية */
-    .create-options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
-    .create-option-card {
-      background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px; padding: 16px; display: flex; justify-content: space-between; align-items: center;
-      cursor: pointer; transition: 0.2s;
-    }
-    .create-option-card:active { background: rgba(30, 41, 59, 0.9); border-color: #38bdf8; }
-    .option-info { text-align: right; }
-    .option-title { font-size: 15px; font-weight: bold; color: #ffffff; margin-bottom: 4px; }
-    .option-desc { font-size: 11px; color: #94a3b8; }
-    .option-icon { 
-      width: 40px; height: 40px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2);
-      border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-size: 18px; flex-shrink: 0;
-    }
-
-    /* شاشة القوالب */
-    .templates-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; margin-top: 12px; }
+    .templates-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
     .template-card {
-      background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px; height: 150px; display: flex; flex-direction: column;
-      align-items: center; justify-content: flex-end; cursor: pointer; position: relative; overflow: hidden; padding-bottom: 12px;
+      background: #151c28; border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px; height: 140px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden;
     }
-    .template-card img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0.5; }
-    .template-badge { 
-      position: relative; z-index: 2; font-weight: bold; font-size: 13px; color: #ffffff;
-      background: rgba(15, 23, 42, 0.8); padding: 4px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
-      display: flex; align-items: center; gap: 4px;
+    .template-card img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0.3; }
+    .template-name-badge { 
+      position: relative; z-index: 2; font-weight: 700; font-size: 14px; color: #ffffff;
+      background: rgba(15, 23, 42, 0.85); padding: 6px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
     }
-    .delete-btn {
-      position: absolute; top: 8px; left: 8px; background: rgba(239, 68, 68, 0.8); color: white;
+    .delete-template-btn {
+      position: absolute; top: 10px; left: 10px; background: #ef4444; color: white;
       border: none; width: 26px; height: 26px; border-radius: 50%; font-size: 12px; cursor: pointer; z-index: 10;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .add-template-btn {
-      width: 100%; background: rgba(56, 189, 248, 0.1); border: 2px dashed #38bdf8; color: #38bdf8;
-      padding: 14px; border-radius: 14px; font-weight: bold; text-align: center; cursor: pointer; margin-top: 12px;
+      display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
     }
 
-    /* شاشة التعديل المطابقة للصورة تماماً */
+    /* شاشة التعديل المطابقة للصورة الأولى تماماً */
     .preview-box {
       width: 100%; height: 260px; background: #151c28; border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center;
@@ -120,22 +60,10 @@
       transform: translate(0px, 0px) rotate(0deg);
     }
 
-    /* أدوات التحكم العلوية داخل شاشة التعديل (أزرار مصغرة مثل الصورة) */
-    .editor-top-controls {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-    }
-    .mini-icon-btn {
-      background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);
-      width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #38bdf8; cursor: pointer; font-size: 14px;
-    }
-
-    /* قسم تدوير النص وموضع النص المطابق للصورة */
     .rotation-section {
       background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 16px; padding: 12px 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
     }
-    .rotation-info { text-align: right; }
-    .rotation-title { font-size: 13px; font-weight: bold; color: #cbd5e1; }
     .rotation-visual {
       width: 48px; height: 48px; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 50%;
       position: relative; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #94a3b8;
@@ -144,51 +72,28 @@
       width: 8px; height: 8px; background: #0ea5e9; border-radius: 50%; position: absolute; top: 4px; right: 10px;
     }
 
-    /* شريط الأسهم الخمسة المطابق للصورة تماماً */
-    .arrows-bar {
-      display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px;
-    }
+    /* شريط الأسهم الخمسة بالحجم والترتيب المطابق */
+    .arrows-bar { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
     .arrow-btn {
       flex: 1; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1);
       height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-      color: #ffffff; font-size: 18px; cursor: pointer; transition: 0.1s;
+      color: #ffffff; font-size: 18px; cursor: pointer;
     }
     .arrow-btn:active { background: #0ea5e9; border-color: #38bdf8; }
 
-    .reset-rotation-text {
-      text-align: right; font-size: 12px; color: #38bdf8; margin-bottom: 14px; cursor: pointer; padding-right: 4px;
-    }
+    .reset-rotation-text { text-align: right; font-size: 12px; color: #38bdf8; margin-bottom: 14px; cursor: pointer; padding-right: 4px; }
 
     .input-group {
       background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px; padding: 10px 14px; margin-bottom: 6px; display: flex; align-items: center;
     }
-    .input-group input {
-      width: 100%; background: transparent; border: none; color: white; font-size: 15px; outline: none; text-align: right;
-    }
+    .input-group input { width: 100%; background: transparent; border: none; color: white; font-size: 15px; outline: none; text-align: right; }
     .t-icon-btn {
       background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3);
       width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
       color: #38bdf8; font-weight: bold; cursor: pointer; margin-left: 10px; flex-shrink: 0;
     }
     .counter-text { font-size: 11px; color: #64748b; margin-bottom: 14px; text-align: right; padding-right: 4px; }
-
-    #fontModal {
-      display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #131b2e;
-      border-top: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px 20px 0 0;
-      padding: 20px; z-index: 1000; max-height: 70vh; overflow-y: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-    }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; }
-    .modal-title { font-size: 16px; font-weight: bold; color: #ffffff; }
-    .close-modal { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
-
-    .font-option-card {
-      background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px; padding: 12px 16px; margin-bottom: 10px; display: flex;
-      justify-content: space-between; align-items: center; cursor: pointer;
-    }
-    .font-label { font-size: 12px; color: #94a3b8; }
-    .font-preview-sample { font-size: 20px; color: #ffffff; }
 
     .tabs-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; }
     .tab-btn {
@@ -204,7 +109,19 @@
       width: 100%; background: linear-gradient(135deg, #0284c7, #2563eb); color: white;
       border: none; padding: 14px; border-radius: 14px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
     }
-    .back-link { color: #38bdf8; font-size: 14px; cursor: pointer; margin-bottom: 12px; display: inline-block; }
+
+    /* نافذة اختيار الخط */
+    #fontModal {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #131b2e;
+      border-top: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px 20px 0 0;
+      padding: 20px; z-index: 1000; max-height: 70vh; overflow-y: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; }
+    .font-option-card {
+      background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 10px; display: flex;
+      justify-content: space-between; align-items: center; cursor: pointer;
+    }
 
     /* الشريط السفلي للتنقل */
     .bottom-nav {
@@ -220,120 +137,45 @@
 </head>
 <body>
 
-  <!-- الشاشة الرئيسية -->
-  <div id="homeScreen" class="screen active">
+  <!-- شاشة القوالب (المطابقة لصورتك الثانية تماماً) -->
+  <div id="templatesScreen" class="screen active">
+    <!-- الهيدر العلوي تماماً مثل صورتك: علامة X على اليسار، اسم البوت في المنتصف، سهم وثلاث نقاط على اليمين -->
     <div class="top-header">
-      <div class="logo-area"><span>👑</span> STICKER HUB</div>
-      <div class="top-icon-btn" onclick="openOwnerPanel()" title="لوحة المالك">⚙️</div>
-    </div>
-
-    <!-- بانر الإعلان العلوي -->
-    <div class="vip-banner" onclick="window.open('https://t.me/r_3_4', '_blank')">
-      <div style="font-size: 13px; font-weight: bold; color: #e2e8f0; width: 100%;">
-        <span style="color: #c084fc; font-size: 14px; margin-bottom: 2px; display: block;">📢 اعلن هنا</span>
-        مميزات حصرية • خدمات أسرع • محتوى مميز
+      <div class="header-left">
+        <span class="header-icon" onclick="tg.close()">✕</span>
+      </div>
+      <div class="header-title">تجربه صفصف</div>
+      <div class="header-right">
+        <span class="header-icon">⌄</span>
+        <span class="header-icon">⋮</span>
       </div>
     </div>
 
-    <!-- بطاقة حساب المستخدم وزر الاشتراك -->
-    <div class="profile-card">
-      <button class="subscribe-btn" onclick="openMyAccount()">👑 اشترك</button>
-      <div class="user-info">
-        <div class="user-details" style="text-align: right;">
-          <div class="username" id="userNameDisplay">جاري التحميل...</div>
-          <div class="plan-status">انت تستخدم الخطة المجانية الان</div>
-        </div>
-        <div class="user-avatar" id="userAvatarContainer">👤</div>
-      </div>
+    <div class="templates-header-title">
+      <div class="templates-main-title">صنع ملصقات مميزة</div>
+      <div class="templates-sub-title">اختر قالباً لبدء تصميم الملصق</div>
     </div>
 
-    <!-- شريط الاستخدام اليومي -->
-    <div class="usage-box">
-      <div class="usage-header">
-        <span>استخدامك اليومي</span>
-        <span id="usageCounterText">2 / 2</span>
-      </div>
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="usageBarFill" style="width: 100%;"></div>
-      </div>
+    <!-- زر إرسال ملصق جديد ليصبح قالباً المنقط تماماً مثل صورتك -->
+    <div class="add-template-box" onclick="requestAddTemplate()">
+      <span>إرسال ملصق جديد ليصبح قالباً</span>
+      <span style="font-size: 18px;">+</span>
     </div>
 
-    <!-- الإحصائيات -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-number">2</div>
-        <div class="stat-label">ملصق مصمم</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">23</div>
-        <div class="stat-label">حزمة منشأة</div>
-      </div>
-    </div>
-
-    <!-- البانر السفلي -->
-    <div class="promo-banner">
-      <div style="background: #ef4444; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">▶</div>
-      <div class="promo-text">
-        الملصقات المميزة الاحترافية في تليجرام بلاش!
-        <span>سورس العمدة • 38 مشتركاً</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- شاشة إنشاء ملصق الرئيسية -->
-  <div id="createScreen" class="screen">
-    <div class="title-section" style="margin-bottom: 6px;">
-      <div class="main-title" style="font-size: 18px; font-weight: 800;">إنشاء ملصق</div>
-      <div class="sub-title" style="font-size: 12px; color: #94a3b8;">اختر طريقة البداية</div>
-    </div>
-    
-    <div class="create-options-container">
-      <div class="create-option-card" onclick="openTemplatesList()">
-        <div class="option-icon">✨</div>
-        <div class="option-info">
-          <div class="option-title">إنشاء من قالب</div>
-          <div class="option-desc">اختر قالب متحرك وأضف اسمك عليه...</div>
-        </div>
-      </div>
-
-      <div class="create-option-card" onclick="openTextOnlyEditor()">
-        <div class="option-icon">T</div>
-        <div class="option-info">
-          <div class="option-title">نص بدون قالب</div>
-          <div class="option-desc">ملصق نصي بخلفية شفافة بالكامل</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- شاشة عرض القوالب -->
-  <div id="templatesListScreen" class="screen">
-    <div class="back-link" onclick="switchTabNav('create')">⬅️ رجوع لاختيار الطريقة</div>
-    <div class="title-section" style="margin-bottom: 4px;">
-      <div class="main-title" style="font-size: 18px; font-weight: 800;">اختر قالباً</div>
-    </div>
-    <div class="add-template-btn" onclick="requestAddTemplate()">➕ إرسال ملصق جديد ليصبح قالباً</div>
+    <!-- قائمة القوالب -->
     <div class="templates-grid" id="templatesContainer"></div>
   </div>
 
-  <!-- شاشة الحزم -->
-  <div id="packsScreen" class="screen">
-    <div class="title-section" style="margin-bottom: 12px;">
-      <div class="main-title" style="font-size: 18px; font-weight: 800;">حزمي الخاصة</div>
-      <div class="sub-title" style="font-size: 12px; color: #94a3b8;">إدارة وتعديل حزم الملصقات الخاصة بك</div>
-    </div>
-    <div class="stat-card" style="margin-bottom: 12px;">
-      <div class="stat-number">23 حزمة</div>
-      <div class="stat-label">إجمالي الحزم المُنشأة</div>
-    </div>
-  </div>
-
-  <!-- شاشة التعديل المطابقة للصورة تماماً -->
+  <!-- شاشة التعديل (المطابقة للصورة الأولى تماماً) -->
   <div id="editorScreen" class="screen">
-    <div class="editor-top-controls">
-      <div class="mini-icon-btn" onclick="goBackFromEditor()">⬅️</div>
-      <div style="font-size: 15px; font-weight: bold;" id="selectedTemplateTitle">تصميم الملصق</div>
-      <div class="mini-icon-btn" onclick="finalSubmit()">↗️</div>
+    <div class="top-header">
+      <div class="header-left">
+        <span class="header-icon" onclick="goBackToTemplates()">⬅️</span>
+      </div>
+      <div class="header-title" id="selectedTemplateTitle">تصميم الملصق</div>
+      <div class="header-right">
+        <span class="header-icon" onclick="finalSubmit()">↗️</span>
+      </div>
     </div>
 
     <div class="preview-box">
@@ -341,19 +183,17 @@
       <div id="previewText">ابجد</div>
     </div>
 
-    <!-- قسم تدوير النص وموضع النص (مطابق للصورة) -->
     <div class="rotation-section">
       <div class="rotation-visual">
         <div class="rotation-dot" id="rotationDot"></div>
         <span id="rotationAngleText">0°</span>
       </div>
-      <div class="rotation-info">
-        <div class="rotation-title">موضع النص</div>
+      <div class="rotation-info" style="text-align: right;">
+        <div style="font-size: 13px; font-weight: bold; color: #cbd5e1;">موضع النص</div>
         <div style="font-size: 11px; color: #94a3b8;">استخدم الأسهم أدناه لتحريك النص</div>
       </div>
     </div>
 
-    <!-- شريط الأسهم الخمسة المطابق للصورة تماماً -->
     <div class="arrows-bar">
       <div class="arrow-btn" onclick="moveText(-10, 0)">←</div>
       <div class="arrow-btn" onclick="moveText(0, -10)">↑</div>
@@ -388,11 +228,22 @@
     <button class="btn-primary" onclick="finalSubmit()">متابعة</button>
   </div>
 
+  <!-- شاشة الحزم -->
+  <div id="packsScreen" class="screen">
+    <div class="top-header">
+      <div class="header-title">حزمي الخاصة</div>
+    </div>
+    <div style="background: rgba(30, 41, 59, 0.5); padding: 20px; border-radius: 16px; text-align: center;">
+      <div style="font-size: 18px; font-weight: bold; margin-bottom: 6px;">23 حزمة منشأة</div>
+      <div style="font-size: 12px; color: #94a3b8;">إدارة وتعديل حزم الملصقات الخاصة بك</div>
+    </div>
+  </div>
+
   <!-- نافذة اختيار الخط -->
   <div id="fontModal">
     <div class="modal-header">
-      <button class="close-modal" onclick="closeFontModal()">✕</button>
-      <div class="modal-title">اختر الخط</div>
+      <button style="background:none; border:none; color:#94a3b8; font-size:18px; cursor:pointer;" onclick="closeFontModal()">✕</button>
+      <div style="font-size: 16px; font-weight: bold;">اختر الخط</div>
     </div>
     <div id="fontListContainer"></div>
   </div>
@@ -400,34 +251,18 @@
   <!-- الشريط السفلي للتنقل -->
   <div class="bottom-nav">
     <div class="nav-item" id="nav-packs" onclick="switchTabNav('packs')">📦<span>حزمي</span></div>
-    <div class="nav-item" id="nav-create" onclick="switchTabNav('create')">➕<span>إنشاء ملصق</span></div>
-    <div class="nav-item active" id="nav-home" onclick="switchTabNav('home')">🏠<span>الرئيسية</span></div>
+    <div class="nav-item active" id="nav-create" onclick="switchTabNav('create')">➕<span>إنشاء ملصق</span></div>
+    <div class="nav-item" id="nav-home" onclick="switchTabNav('home')">🏠<span>الرئيسية</span></div>
   </div>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-      const user = tg.initDataUnsafe.user;
-      document.getElementById('userNameDisplay').innerText = user.first_name || "مستخدم تليجرام";
-      if (user.photo_url) {
-        document.getElementById('userAvatarContainer').innerHTML = `<img src="${user.photo_url}" alt="User">`;
-      }
-    }
-
-    function openMyAccount() {
-      window.open('https://t.me/r_3_4', '_blank');
-    }
-
-    let templates = [];
-    for (let i = 1; i <= 57; i++) {
-      templates.push({
-        id: i,
-        name: `قالب ${i}`,
-        url: `https://via.placeholder.com/150/1e293b/38bdf8?text=Template+${i}`
-      });
-    }
+    let templates = [
+      { id: 2, name: "قالب 2", url: "https://via.placeholder.com/150/1e293b/38bdf8?text=Template+2" },
+      { id: 1, name: "قالب 1", url: "https://via.placeholder.com/150/1e293b/38bdf8?text=Template+1" }
+    ];
 
     const fontsList = [
       { id: 1, name: "خط رقم 1", family: "'Amiri', serif" },
@@ -439,48 +274,22 @@
 
     let posX = 0, posY = 0, currentRotation = 0;
     let chosenTemplate = "";
-    let isTextOnlyMode = false;
 
     function switchTabNav(tabName) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-      if(tabName === 'home') {
-        document.getElementById('homeScreen').classList.add('active');
-        document.getElementById('nav-home').classList.add('active');
-      } else if(tabName === 'create') {
-        document.getElementById('createScreen').classList.add('active');
+      if(tabName === 'create') {
+        document.getElementById('templatesScreen').classList.add('active');
         document.getElementById('nav-create').classList.add('active');
+        renderTemplates();
       } else if(tabName === 'packs') {
         document.getElementById('packsScreen').classList.add('active');
         document.getElementById('nav-packs').classList.add('active');
-      }
-    }
-
-    function openTemplatesList() {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById('templatesListScreen').classList.add('active');
-      renderTemplates();
-    }
-
-    function openTextOnlyEditor() {
-      isTextOnlyMode = true;
-      chosenTemplate = "بدون قالب";
-      document.getElementById('selectedTemplateTitle').innerText = "نص بدون قالب (شفاف)";
-      
-      const img = document.getElementById('previewImage');
-      img.style.display = 'none';
-      img.src = "";
-
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById('editorScreen').classList.add('active');
-    }
-
-    function goBackFromEditor() {
-      if (isTextOnlyMode) {
-        switchTabNav('create');
-      } else {
-        openTemplatesList();
+      } else if(tabName === 'home') {
+        // إذا رغب العضو بالرئيسية يمكن ربطها أو تركها
+        document.getElementById('templatesScreen').classList.add('active');
+        document.getElementById('nav-create').classList.add('active');
       }
     }
 
@@ -491,9 +300,9 @@
         const card = document.createElement('div');
         card.className = 'template-card';
         card.innerHTML = `
-          <button class="delete-btn" onclick="event.stopPropagation(); deleteTemplate(${t.id})">✕</button>
+          <button class="delete-template-btn" onclick="event.stopPropagation(); deleteTemplate(${t.id})">✕</button>
           <img src="${t.url}" alt="${t.name}">
-          <div class="template-badge">🔥 ${t.name}</div>
+          <div class="template-name-badge">${t.name}</div>
         `;
         card.onclick = () => selectTemplate(t.name, t.url);
         container.appendChild(card);
@@ -508,15 +317,14 @@
         item.className = 'font-option-card';
         item.onclick = () => selectFont(f.family);
         item.innerHTML = `
-          <div class="font-preview-sample" style="font-family: ${f.family};">ابجد ABC</div>
-          <div class="font-label">${f.name}</div>
+          <div style="font-size: 20px; color: #ffffff; font-family: ${f.family};">ابجد ABC</div>
+          <div style="font-size: 12px; color: #94a3b8;">${f.name}</div>
         `;
         container.appendChild(item);
       });
     }
 
     function selectTemplate(name, imgUrl) {
-      isTextOnlyMode = false;
       chosenTemplate = name;
       document.getElementById('selectedTemplateTitle').innerText = name;
       const img = document.getElementById('previewImage');
@@ -524,6 +332,11 @@
       img.style.display = 'block';
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('editorScreen').classList.add('active');
+    }
+
+    function goBackToTemplates() {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('templatesScreen').classList.add('active');
     }
 
     function deleteTemplate(id) {
@@ -555,6 +368,7 @@
     }
 
     function rotateText(angleStep) {
+      currentRevenue = 0;
       currentRotation = (currentRotation + angleStep) % 360;
       updateTransform();
     }
@@ -563,7 +377,6 @@
       const txtElem = document.getElementById('previewText');
       txtElem.style.transform = `translate(${posX}px, ${posY}px) rotate(${currentRotation}deg)`;
       
-      // تحديث دائرة الدوران الصغيرة المطابقة للصورة
       document.getElementById('rotationAngleText').innerText = `${currentRotation}°`;
       const dot = document.getElementById('rotationDot');
       const rad = (currentRotation - 90) * (Math.PI / 180);
@@ -588,13 +401,6 @@
       document.getElementById(tabId).style.display = 'flex';
     }
 
-    function openOwnerPanel() {
-      let pass = prompt('أدخل رمز المالك للتحكم بالاستخدامات:');
-      if(pass) {
-        tg.sendData(JSON.stringify({ action: 'owner_panel', password: pass }));
-      }
-    }
-
     function finalSubmit() {
       tg.sendData(JSON.stringify({
         action: 'create_sticker',
@@ -607,6 +413,7 @@
       tg.close();
     }
 
+    renderTemplates();
     renderFonts();
   </script>
 </body>
