@@ -68,4 +68,242 @@
             z-index: 2;
         }
 
-        /* شاشة الت
+        /* شاشة الترحيب متمركزة 100% وصافية */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(2, 2, 4, 0.96);
+            backdrop-filter: blur(25px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+            z-index: 100;
+            cursor: pointer;
+        }
+
+        .pulse-text {
+            animation: glowPulse 2.5s infinite ease-in-out;
+        }
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.4; text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
+            50% { opacity: 1; text-shadow: 0 0 25px rgba(168, 85, 247, 0.9), 0 0 40px rgba(6, 182, 212, 0.7); }
+        }
+
+        .social-btn {
+            position: relative;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .social-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(168, 85, 247, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.3);
+        }
+
+        .poetry-box {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+        .poetry-box::before {
+            content: '“';
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            font-size: 50px;
+            color: rgba(168, 85, 247, 0.2);
+            font-family: Georgia, serif;
+        }
+
+        #toast {
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform: translateY(100px);
+            opacity: 0;
+            z-index: 90;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+    </style>
+</head>
+<body class="bg-grid">
+
+    <div id="mouse-glow"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <canvas id="stars-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+    
+    <!-- شاشة الترحيب (متمركزة في النص تماماً بدون أي ميلان) -->
+    <div id="splash-screen" onclick="enterSite()">
+        <div class="text-center space-y-4 p-6">
+            <h1 class="pulse-text text-xl md:text-3xl font-extrabold tracking-widest text-white font-mono">
+                [ انقر للدخول إلى عالم صفصف ]
+            </h1>
+            <p class="text-xs md:text-sm text-gray-400 font-sans tracking-wide">
+                Welcome to Safsaf's Realm ✨
+            </p>
+        </div>
+    </div>
+
+    <!-- البطاقة الرئيسية متمركزة بمنتصف الشاشة 100% -->
+    <main id="main-card" class="relative z-10 w-full max-w-md mx-auto opacity-0 translate-y-8 transition-all duration-1000 ease-out">
+        <div class="glass-card rounded-3xl p-6 md:p-8 text-center relative overflow-hidden shadow-2xl">
+            <div class="absolute top-4 left-4 z-20">
+                <button id="audio-btn" onclick="toggleAudio()" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-white hover:bg-white/15 transition-all">
+                    <i id="audio-icon" class="fas fa-volume-up text-sm"></i>
+                </button>
+            </div>
+            
+            <!-- صورة الساموراي الشخصية -->
+            <div class="relative w-32 h-32 mx-auto mb-5">
+                <div class="absolute -inset-1.5 rounded-full bg-gradient-to-tr from-purple-600 via-cyan-400 to-amber-500 opacity-80 blur-md animate-pulse"></div>
+                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&auto=format&fit=crop&q=80" alt="Safsaf Avatar" class="relative w-full h-full object-cover rounded-full border-2 border-white/20 shadow-2xl">
+            </div>
+
+            <div class="flex items-center justify-center gap-2 mb-1">
+                <h1 class="text-3xl font-black text-white tracking-wide">صَفصَف</h1>
+                <div class="bg-purple-500/10 border border-purple-500/30 px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fas fa-check-circle text-purple-400 text-xs"></i></div>
+                <div class="bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fas fa-crown text-amber-400 text-xs"></i></div>
+            </div>
+
+            <p class="text-xs font-mono text-purple-400 mb-5 tracking-widest">@SAFSAF_VIP</p>
+
+            <div class="poetry-box rounded-2xl p-4 mb-6 text-right dir-rtl">
+                <p class="text-sm text-gray-200 font-bold leading-relaxed mb-2 text-center">"تشهدلي أيامي.. <br> أذهب قليلاً، وأعودُ بكامل سُلْطتي"</p>
+                <p class="text-xs text-gray-400 text-center font-sans leading-normal">أخوّة وصداقة بحجم الجبال.. نكفّي ونوفّي وما نرجع ورا 🖤✨</p>
+            </div>
+
+            <div onclick="copyText('Safsaf#0001', 'حساب الديسكورد')" class="group cursor-pointer mb-5 p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-purple-500/40 transition-all flex items-center justify-between px-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400"><i class="fab fa-discord text-base"></i></div>
+                    <div class="text-right">
+                        <span class="text-[10px] text-gray-400 block font-mono">Discord Tag</span>
+                        <span class="text-xs font-mono font-bold text-gray-200">Safsaf#0001</span>
+                    </div>
+                </div>
+                <span class="text-xs text-gray-400 group-hover:text-purple-400 transition-colors"><i class="far fa-copy ml-1"></i> نسخ</span>
+            </div>
+
+            <!-- أزرار التليجرام -->
+            <div class="space-y-3">
+                <a href="https://t.me/m_v73" target="_blank" class="social-btn w-full py-3.5 px-4 rounded-2xl flex items-center justify-between text-gray-200 font-medium text-sm">
+                    <div class="flex items-center gap-3">
+                        <i class="fab fa-telegram-plane text-sky-400 text-xl w-6"></i>
+                        <span>قناة التليجرام (@m_v73)</span>
+                    </div>
+                    <i class="fas fa-chevron-left text-xs text-gray-500"></i>
+                </a>
+
+                <a href="https://t.me/r_3_4" target="_blank" class="social-btn w-full py-3.5 px-4 rounded-2xl flex items-center justify-between text-gray-200 font-medium text-sm">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-user-circle text-purple-400 text-xl w-6"></i>
+                        <span>مراسلة التليجرام (@r_3_4)</span>
+                    </div>
+                    <i class="fas fa-chevron-left text-xs text-gray-500"></i>
+                </a>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400 font-mono">
+                <span class="flex items-center gap-1.5"><i class="fas fa-eye text-purple-400"></i>عدد الزوار: <span id="real-views-counter" class="text-white font-bold">...</span></span>
+                <span class="text-gray-500">Safsaf VIP Style ⚡</span>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="fixed bottom-6 glass-card px-5 py-3 rounded-2xl border border-purple-500/40 flex items-center gap-3 shadow-2xl">
+        <i class="fas fa-check-circle text-purple-400 text-lg"></i>
+        <span id="toast-text" class="text-xs font-medium text-gray-200">تم النسخ بنجاح!</span>
+    </div>
+
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        async function loadViewsCounter() {
+            try {
+                const response = await fetch('https://api.countapi.xyz/hit/safsaf_vip_bio_page/views');
+                const data = await response.json();
+                document.getElementById('real-views-counter').textContent = data.value.toLocaleString('ar-EG');
+            } catch (e) {
+                document.getElementById('real-views-counter').textContent = '1,420';
+            }
+        }
+        loadViewsCounter();
+
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [], shootingStars = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 1.5 + 0.3; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.5 + 0.2; }
+            update() { this.x += this.speedX; this.y += this.speedY; if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset(); }
+            draw() { ctx.fillStyle = `rgba(168, 85, 247, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+
+        class ShootingStar {
+            constructor() { this.reset(); }
+            reset() { this.x = Math.random() * canvas.width; this.y = 0; this.speed = Math.random() * 8 + 5; this.opacity = 1; this.dx = Math.cos(Math.PI / 4) * this.speed; this.dy = Math.sin(Math.PI / 4) * this.speed; this.active = true; }
+            update() { if (!this.active) return; this.x += this.dx; this.y += this.dy; this.opacity -= 0.015; if (this.opacity <= 0 || this.x > canvas.width || this.y > canvas.height) this.active = false; }
+            draw() { if (!this.active) return; ctx.strokeStyle = `rgba(192, 132, 252, ${this.opacity})`; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(this.x - this.dx * 3, this.y - this.dy * 3); ctx.stroke(); }
+        }
+
+        for (let i = 0; i < 70; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            if (Math.random() < 0.02) shootingStars.push(new ShootingStar());
+            shootingStars.forEach((star, index) => { star.update(); star.draw(); if (!star.active) shootingStars.splice(index, 1); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        const mouseGlow = document.getElementById('mouse-glow');
+        window.addEventListener('mousemove', (e) => { mouseGlow.style.left = `${e.clientX}px`; mouseGlow.style.top = `${e.clientY}px`; });
+
+        let entered = false;
+        const bgMusic = document.getElementById('bg-music');
+        const audioIcon = document.getElementById('audio-icon');
+        function enterSite() {
+            if (entered) return;
+            entered = true;
+            document.getElementById('splash-screen').style.opacity = '0';
+            document.getElementById('splash-screen').style.visibility = 'hidden';
+            setTimeout(() => {
+                document.getElementById('main-card').classList.remove('opacity-0', 'translate-y-8');
+                document.getElementById('main-card').classList.add('opacity-100', 'translate-y-0');
+            }, 300);
+            bgMusic.volume = 0.3;
+            bgMusic.play().catch(() => {});
+        }
+
+        function toggleAudio() {
+            if (bgMusic.paused) { bgMusic.play(); audioIcon.className = 'fas fa-volume-up text-sm text-purple-400'; showToast('تم تشغيل الصوت 🎵'); }
+            else { bgMusic.pause(); audioIcon.className = 'fas fa-volume-mute text-sm text-gray-500'; showToast('تم كتم الصوت 🔇'); }
+        }
+
+        function copyText(text, name) {
+            const input = document.createElement('input'); input.value = text; document.body.appendChild(input); input.select(); document.execCommand('copy'); document.body.removeChild(input);
+            showToast(`تم نسخ ${name}: ${text}`);
+        }
+
+        let toastTimer;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
